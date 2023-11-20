@@ -6,33 +6,30 @@ import clsx from "clsx";
 import SectionSlide from "@/components/SectionSlide";
 
 export default function Content(){
- 
+
   const [section, setSection] = useState('');
-  useEffect(()=>{
-    console.log('=========section',section);
-  },[section])
+  // useEffect(()=>{
+  //   console.log('=========section',section);
+  // },[section])
 
   const player = useContext(PlayerContext);
   const [nowPlaying, setNowPlaying] = useState('');
   useEffect(()=>{
-    const sectStart = (index: PlayerSectionIndex, overrides): void=>{
+    const sectStart = () => {
         setNowPlaying(player.playingNow?.name)
         setSection(player.playingNow?.name)
     }
-    if(player.onSectionPlayStart){
-        const old = player.onSectionPlayStart;
-        player.onSectionPlayStart = (index,overrides)=>{
-            old(index,overrides)
-            sectStart(index,overrides)
-        }
+    if(player){
+      player.addEventListener('onSectionPlayStart', sectStart);
     }
-    else 
-    player.onSectionPlayStart = sectStart
+    return ()=>{
+      if(player)
+      player.removeEventListener('onSectionPlayStart', sectStart);
+    }
 },[])
 
   const onNext = (tag:string)=>{
     player.play()
-    console.log('++++++++play',tag)
   }
 
 

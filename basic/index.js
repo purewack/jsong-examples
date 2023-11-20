@@ -1,4 +1,4 @@
-import JSONg from "jsong";
+import JSONg from "jsong-audio";
 
 const loaderLabel = document.getElementById("loader");
 loaderLabel.innerText = 'Loading...'
@@ -20,15 +20,17 @@ songLoad('test_song')
 
 
 const state = document.getElementById("state")
-player.onStateChange = (st)=>{
+player.addEventListener('onStateChange',(e)=>{
+  const st = e.detail
   console.log(st)
   state.innerText = "State:" + st
-}
+})
 
 const timeline = document.getElementById("timeline")
-player.onTransport = (song, section)=>{
-  timeline.innerText = `T: ${song} [${section[0]}/${section[1]}]`;
-}
+player.addEventListener('onTransport',(e)=>{
+  const {position: pos, loopBeatPosition: section} = e.detail
+  timeline.innerText = `T: ${pos} [${section[0]}/${section[1]}]`;
+})
 const ntimeline = document.getElementById("ntimeline")
   
 const playbutton = document.getElementById("play")
@@ -65,26 +67,30 @@ document.getElementById("xb").addEventListener("click", () => {
 });
 
 
-player.onSectionRepeat = (index, reps)=>{ 
-  document.getElementById("reps").innerText = JSON.stringify(index) + ' ' + reps
-}
+// player.onSectionRepeat = (index, reps)=>{ 
+//   document.getElementById("reps").innerText = JSON.stringify(index) + ' ' + reps
+// }
 
 const squeue = document.getElementById("prequeue")
 const queue = document.getElementById("postqueue")
 
-player.onSectionPlayStart = (index, flags)=>{ 
+player.addEventListener('onSectionPlayStart' ,(e)=>{ 
+  const {index} = e.detail
   queue.innerText = 'Now Playing: ' + index
   playbutton.innerText = 'Play'
-}
-player.onSectionPlayEnd = (index, flags)=>{
+})
+player.addEventListener('onSectionPlayEnd' ,(e)=>{
+  const {index} = e.detail
   squeue.innerText = 'Has Ended: ' + index
-}
-player.onSectionWillEnd = (index, flags, when)=>{
+})
+player.addEventListener('onSectionWillEnd' ,(e)=>{
+  const {index} = e.detail
   if(!index) squeue.innerText = 'cancelled'
   squeue.innerText = 'Will End: ' + index
-}
+})
 
-player.onSectionWillStart = (index, flags, when)=>{
+player.addEventListener('onSectionWillStart' ,(e)=>{
+  const {index,when} = e.detail
   if(!index) {
     squeue.innerText = 'Cancelled'
     playbutton.innerText = 'Play'
@@ -94,7 +100,7 @@ player.onSectionWillStart = (index, flags, when)=>{
     ntimeline.innerText = 'NextT:' + when;
     playbutton.innerText = 'Cancel'
   }
-}
+})
 
 player.onSectionCancelChange = ()=>{
   ntimeline.innerText = 'NextT:';

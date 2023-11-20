@@ -15,28 +15,25 @@ export default function PlayerNav({show=true, pending=false}){
     const [nowPlaying, setNowPlaying] = useState('')
     
     useEffect(()=>{
-        if(!player) return;
-        if(!player) return;
-        const p = player;
-        p.onStateChange=(s)=>{setPlayerState(s)}
-        p.onTransport = (pos: string, loopPos?: [number,number])=>{
-            if(loopPos){
-                setLoopProgress(loopPos);
+        const onstate = (e)=>{setPlayerState(e.detail)} 
+        const ontransport = (e)=>{
+            const {position, loopBeatPosition} = e.detail
+            if(loopBeatPosition){
+                setLoopProgress(loopBeatPosition);
             }
         }
+        const onsectionstart = ()=>{
+            setNowPlaying(player?.playingNow?.name)
+        }
+        player.addEventListener('onStateChange',onstate)
+        player.addEventListener('onTransport', ontransport)
+        player.addEventListener('onSectionPlayStart', onsectionstart)
 
-        const sectStart = (index, overrides)=>{
-            setNowPlaying(p?.playingNow?.name)
+        return ()=>{
+            player.removeEventListener('onStateChange',onstate)
+            player.removeEventListener('onTransport', ontransport)
+            player.removeEventListener('onSectionPlayStart', onsectionstart)
         }
-        if(p.onSectionPlayStart){
-            const old = p.onSectionPlayStart;
-            p.onSectionPlayStart = (index,overrides)=>{
-                old(index,overrides)
-                sectStart(index,overrides)
-            }
-        }
-        else 
-        p.onSectionPlayStart = sectStart
     },[])
 
 
@@ -46,11 +43,11 @@ export default function PlayerNav({show=true, pending=false}){
         <span className={style.progress} style={{
             '--progress': isPlaying ? (1+loopProgress[0]) / loopProgress[1] : 0
         } as CSSProperties}>
-            {/* {isPlaying ? 
+            {isPlaying ? 
                 <>{nowPlaying} : {loopProgress[0] + 1} / {loopProgress[1]}</>
-            : playerState } */}
+            : playerState }
         </span>
- 
+
         <span className={'material-symbols-outlined'} onClick={()=>{
             setIsMute(m => {
                 if(!m) player.muteAll()

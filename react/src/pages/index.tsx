@@ -1,6 +1,6 @@
 import styles from '@/styles/index.module.css'
 import { useContext, useEffect, useRef, useState } from 'react'
-import JSONg from 'jsong'
+
 import Head from 'next/head';
 import Link from 'next/link';
 import { PlayerContext } from './_app';
