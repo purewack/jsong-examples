@@ -19,12 +19,15 @@ export default function Content(){
         setNowPlaying(player.playingNow?.name)
         setSection(player.playingNow?.name)
     }
-    if(player){
-      player.addEventListener('onSectionPlayStart', sectStart);
+    const transport = (e) => {
+      console.log('beat', e.detail.loopBeatPosition)
     }
+
+    player.addEventListener('onSectionPlayStart', sectStart);
+    player.addEventListener('onTransport', transport);
     return ()=>{
-      if(player)
       player.removeEventListener('onSectionPlayStart', sectStart);
+      player.removeEventListener('onTransport', transport);
     }
 },[])
 

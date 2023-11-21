@@ -5,42 +5,38 @@ import { Dispatch, MutableRefObject, SetStateAction, createContext, useEffect, u
 import JSONg from 'jsong-audio';
 import { usePathname } from 'next/navigation';
 
-export const PlayerContext = createContext<JSONg>(null)
+export const PlayerContext = createContext<MutableRefObject<JSONg>>(null)
 
 export default function App({ Component, pageProps }: AppProps) {
   
-  const player = useRef<JSONg>(null);
+  const player = useRef<JSONg>();
   const [pending, setPending] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(()=>{
     if(player?.current) return;
 
-    const p = new JSONg();
-    player.current = p;
-    p.parse('test_song2').then((reason)=>{
-      if(reason === 'loading_full'){
-      console.log('Full Load play')
-      // p.play();
+    const _player = new JSONg(true);
+    _player.parse('silent').then((reason)=>{
       setReady(true);
-      }
     })
-    p.addEventListener('onSectionWillStart',()=>{
+    _player.addEventListener('onSectionWillStart',()=>{
       setPending(true);
     })
-    p.addEventListener('onSectionPlayStart',(e)=>{
+    _player.addEventListener('onSectionDidStart',(e)=>{
       setPending(false);
       console.log('start',e.detail.index)
     })
-    p.addEventListener('onSectionCancelChange', ()=>{
+    _player.addEventListener('onSectionCancelChange', ()=>{
       setPending(false);
     })
+    player.current = _player;
   },[])
 
   const path = usePathname();
 
-  return player && ready && <>
-    <PlayerContext.Provider value={player.current}>
+  return ready && <>
+    <PlayerContext.Provider value={player}>
       <PlayerNav show={path !== '/'} pending={pending}/>
       <Component {...pageProps} pending={pending}/>
     </PlayerContext.Provider>

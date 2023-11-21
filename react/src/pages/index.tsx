@@ -18,13 +18,18 @@ export default function Home() {
         <h1 className={'title'}>
           What is JSONg Audio?
         </h1>
-        <Link href="content">
+        {/* <Link href="content"> */}
         <button className={styles.button}
         onClick={()=>{
-          player.play();
+          player.current.play();
         }} 
         >Let&apos;s hear it!</button>
-        </Link>
+        <button className={styles.button}
+        onClick={()=>{
+          player.current.stop(0);
+        }} 
+        >Stop</button>
+        {/* </Link> */}
         {/* <button onClick={()=>{
           player.current?.stop()
         }}>Stop</button> */}
