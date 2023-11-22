@@ -8,6 +8,13 @@ import SectionSlide from "@/components/SectionSlide";
 export default function Content(){
 
   const [section, setSection] = useState('');
+  const [navList, setNavList] = useState({
+    intro: false,
+    intro2: false,
+    bridge: false,
+    chorus: false
+  })
+  
   // useEffect(()=>{
   //   console.log('=========section',section);
   // },[section])
@@ -24,6 +31,9 @@ export default function Content(){
         setNowPlaying(player.playingNow?.name)
         setSection(player.playingNow?.name)
         setPending(false);
+        setNavList(l => {
+          return {...l, [jsongplayer.current.playingNow.name]: true}
+        })
     }
     const transport = (e) => {
       // console.log('content', e.detail.loopBeatPosition)
@@ -39,17 +49,25 @@ export default function Content(){
     }
 },[])
 
-  const play = (section: number[])=>{
-    console.log('++++++++++playing section', section)
+  const sectionInView = (section: number[])=>{
     jsongplayer.current.play(section)
   }
-
 
   return (
     <>
       <Head>
         <title>JSONg Audio: {pending ? '...' : ''}{nowPlaying}</title>
       </Head>
+
+      <nav className={style.nav}>
+        <ul>
+          {Object.keys(navList).map(li => {
+          const list = navList as {[key:string]:boolean};
+          return <li key={li}>
+            <input type='checkbox' readOnly checked={list[li]}></input>
+          </li>})}  
+        </ul>
+      </nav>
 
       <SectionSlide type='down'>
         <SectionSlide tag='A' className={clsx(style.A)}>
@@ -62,7 +80,7 @@ export default function Content(){
           {/* <p>{nowPlaying}</p> */}
         </SectionSlide>
 
-        <SectionSlide tag='B' onInView={()=>{play([1])}} className={clsx(style.B)}>
+        <SectionSlide tag='B' onInView={()=>{sectionInView([1])}} className={clsx(style.B)}>
           <h1 className={'title'}>
             ...responding to your actions!
           </h1>
@@ -72,13 +90,13 @@ export default function Content(){
         </SectionSlide>
 
         {<SectionSlide type="side">
-          <SectionSlide tag='C' onInView={()=>{play([3])}} className={clsx(style.C)}>
+          <SectionSlide tag='C' onInView={()=>{sectionInView([3])}} className={clsx(style.C)}>
             <h1 className={'title'}>
               JSONg audio format allows for multiple tracks.
             </h1>
           </SectionSlide>
 
-          {<SectionSlide tag='D' onInView={()=>{play([4])}} className={clsx(style.D)}> 
+          {<SectionSlide tag='D' onInView={()=>{sectionInView([4])}} className={clsx(style.D)}> 
             <h1 className={'title'}>
               Music playback can be changed dynamically.
             </h1>

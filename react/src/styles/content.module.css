@@ -18,3 +18,28 @@
 .waiting.appear {
     opacity: 1;
 }
+
+.nav {
+    position: fixed;
+    bottom: 0;
+    left:0;
+    right:0;
+}
+
+.nav ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    list-style-type: none;
+}
+.nav li:first-child {
+    margin-left: auto;
+}
+.nav li:last-child {
+    margin-right: auto;
+}
+.nav li > * {
+    pointer-events: none;
+    user-select: none;
+}
