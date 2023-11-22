@@ -15,6 +15,7 @@
     "metronome": ["B5","G4"],
     "metronomeDB": -3,
     "totalMeasures": 12,
+    "grain": 6,
     "map": {
       "intro" : { "region": [0, 1]},
       "intro2" : { "region": [1, 3]},

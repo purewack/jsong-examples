@@ -11,3 +11,10 @@
 .D {
     background-color: lightpink;
 }
+
+.waiting:not(.appear) > * {
+    opacity: 0;
+}
+.waiting.appear {
+    opacity: 1;
+}

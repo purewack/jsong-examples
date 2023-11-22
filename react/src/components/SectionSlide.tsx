@@ -13,13 +13,17 @@ export default function SectionSlide({type = 'slide', className='', onInView, ta
     tag?: string,
     onInView?:(tag:string)=>void
 }){
+    const { inView, ref, entry } = useInView({threshold: 0.5});
+   
+    useEffect(()=>{
+        if(inView) onInView?.(tag)
+    },[inView])
+
     return (type === 'side' || type === 'down') ? <article className={clsx(className,style.gallery, style[type], style.snap, 'fullpage')}>
         {children}
     </article>
     :
-    <InView threshold={0.8} onChange={()=>{onInView?.(tag)}}>
-    <section className={clsx('fullpage central ',style.slide,style.snap,className)}>
+    <section ref={ref} className={clsx('fullpage central ',style.slide,style.snap,className)}>
         {children}
     </section>
-    </InView>
 }

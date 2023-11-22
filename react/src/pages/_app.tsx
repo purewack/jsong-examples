@@ -3,6 +3,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Dispatch, MutableRefObject, SetStateAction, createContext, useEffect, useReducer, useRef, useState } from 'react'
 import JSONg from 'jsong-audio';
+import { VerboseLevel } from 'jsong-audio/dist/JSONg';
 import { usePathname } from 'next/navigation';
 
 export const PlayerContext = createContext<MutableRefObject<JSONg>>(null)
@@ -16,8 +17,8 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(()=>{
     if(player?.current) return;
 
-    const _player = new JSONg(true);
-    _player.parse('silent').then((reason)=>{
+    const _player = new JSONg(VerboseLevel.all);
+    _player.parse('test_song2').then((reason)=>{
       setReady(true);
     })
     _player.addEventListener('onSectionWillStart',()=>{

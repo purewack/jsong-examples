@@ -17,30 +17,25 @@ export default function PlayerNav({show=true, pending=false}){
     useEffect(()=>{
         const player = jsongplayer.current
         const onstate = (e)=>{
-            console.log('new state', e.detail)
             setPlayerState(e.detail)
         } 
         const ontransport = (e)=>{
             const {position, loopBeatPosition} = e.detail
-            console.log(loopBeatPosition[0])
             if(loopBeatPosition){
                 setLoopProgress(loopBeatPosition);
             }
         }
         const onsectionstart = ()=>{
-            console.log('play', player?.playingNow?.name);
             setNowPlaying(player?.playingNow?.name)
         }
         player.addEventListener('onTransport', ontransport)
         player.addEventListener('onStateChange',onstate)
-        player.addEventListener('onSectionPlayStart', onsectionstart)
+        player.addEventListener('onSectionDidStart', onsectionstart)
 
-        console.log('add');
         return ()=>{
-            console.log('rm');
             player.removeEventListener('onTransport', ontransport)
             player.removeEventListener('onStateChange',onstate)
-            player.removeEventListener('onSectionPlayStart', onsectionstart)
+            player.removeEventListener('onSectionDidStart', onsectionstart)
         }
     },[])
 
