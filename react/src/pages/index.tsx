@@ -4,10 +4,11 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import Head from 'next/head';
 import Link from 'next/link';
 import { PlayerContext } from './_app';
+import JSONg from 'jsong-audio';
 
 export default function Home() {
 
-  const player = useContext(PlayerContext);
+  const player = useContext(PlayerContext) as JSONg;
 
   return (
     <>
@@ -21,13 +22,13 @@ export default function Home() {
         <Link href="content">
         <button className={styles.button}
         onClick={()=>{
-          player.current.play();
+          player.play();
         }} 
         >Let&apos;s hear it!</button>
         </Link>
         <button className={styles.button}
         onClick={()=>{
-          player.current.stop(0);
+          player.stop(0);
         }} 
         >Stop</button>
         {/* <button onClick={()=>{

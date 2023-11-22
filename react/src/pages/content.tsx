@@ -4,6 +4,7 @@ import { PlayerContext } from "./_app"
 import style from '@/styles/content.module.css'
 import clsx from "clsx";
 import SectionSlide from "@/components/SectionSlide";
+import JSONg from "jsong-audio";
 
 export default function Content(){
 
@@ -15,15 +16,10 @@ export default function Content(){
     chorus: false
   })
   
-  // useEffect(()=>{
-  //   console.log('=========section',section);
-  // },[section])
-
-  const jsongplayer = useContext(PlayerContext);
+  const player = useContext(PlayerContext) as JSONg;
   const [nowPlaying, setNowPlaying] = useState('');
   const [pending, setPending] = useState(false);
   useEffect(()=>{
-    const player = jsongplayer.current;
     const willStart = () => {
         setPending(true);
     }
@@ -32,10 +28,10 @@ export default function Content(){
         setSection(player.playingNow?.name)
         setPending(false);
         setNavList(l => {
-          return {...l, [jsongplayer.current.playingNow.name]: true}
+          return {...l, [player.playingNow.name]: true}
         })
     }
-    const transport = (e) => {
+    const transport = (e: CustomEvent) => {
       // console.log('content', e.detail.loopBeatPosition)
     }
 
@@ -50,7 +46,7 @@ export default function Content(){
 },[])
 
   const sectionInView = (section: number[])=>{
-    jsongplayer.current.play(section)
+    player.play(section)
   }
 
   return (
@@ -75,7 +71,7 @@ export default function Content(){
             An Interactive Music format...
           </h1>
           <button onClick={()=>{
-            jsongplayer.current.play();
+            player.play();
           }}>Next</button>
           {/* <p>{nowPlaying}</p> */}
         </SectionSlide>
@@ -85,7 +81,7 @@ export default function Content(){
             ...responding to your actions!
           </h1>
           <button onClick={()=>{
-            jsongplayer.current.play([4]);
+            player.play([4]);
           }}>Next</button>
         </SectionSlide>
 

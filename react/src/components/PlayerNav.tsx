@@ -1,13 +1,13 @@
 import {CSSProperties, useContext, useEffect, useRef, useState } from "react"
-import JSONg from 'jsong';
 import style from '@/styles/nav.module.css'
 
 import clsx from "clsx";
 import { PlayerContext } from "@/pages/_app";
+import JSONg from "jsong-audio";
 
 export default function PlayerNav({show=true, pending=false}){
 
-    const jsongplayer = useContext<JSONg>(PlayerContext);
+    const player = useContext(PlayerContext) as JSONg;
     const [playerState, setPlayerState] = useState(null)
     const [loopProgress, setLoopProgress] = useState([0,0]);
     const isPlaying = playerState === 'playing';
@@ -15,11 +15,10 @@ export default function PlayerNav({show=true, pending=false}){
     const [nowPlaying, setNowPlaying] = useState('')
     
     useEffect(()=>{
-        const player = jsongplayer.current
-        const onstate = (e)=>{
+        const onstate = (e: CustomEvent)=>{
             setPlayerState(e.detail)
         } 
-        const ontransport = (e)=>{
+        const ontransport = (e: CustomEvent)=>{
             const {position, loopBeatPosition} = e.detail
             if(loopBeatPosition){
                 setLoopProgress(loopBeatPosition);
@@ -50,7 +49,7 @@ export default function PlayerNav({show=true, pending=false}){
                 <>{nowPlaying} : {loopProgress[0] + 1} / {loopProgress[1]}</>
             : playerState }
         </span>
-{/*     
+     
         <button onClick={()=>{player.stop()}}>Stop</button>
         <span className={'material-symbols-outlined'} onClick={()=>{
             setIsMute(m => {
@@ -58,6 +57,6 @@ export default function PlayerNav({show=true, pending=false}){
                 else player.unMuteAll()
                 return !m;
             })
-        }}>{isPlaying && !isMute ? 'volume_up' : 'volume_off'}</span> */}
+        }}>{isPlaying && !isMute ? 'volume_up' : 'volume_off'}</span>
     </nav>
 }
