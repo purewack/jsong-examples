@@ -12,15 +12,23 @@
     background-color: lightpink;
 }
 
-.waiting:not(.appear) > * {
+/* .waiting > * {
+    transition: opacity 1s;
+}
+.waiting:not(.show) > * {
     opacity: 0;
 }
-.waiting.appear {
+.waiting.show > *  {
     opacity: 1;
+} */
+
+.slide.hide {
+    display: none;
 }
 
 .nav {
     position: fixed;
+    z-index: 100;
     bottom: 0;
     left:0;
     right:0;

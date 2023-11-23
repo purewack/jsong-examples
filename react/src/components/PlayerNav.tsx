@@ -41,7 +41,8 @@ export default function PlayerNav({show=true, pending=false}){
 
     const nodeRef = useRef(null);
     return <nav ref={nodeRef} className={clsx(style.nav, true && style.show, pending && style.pending)}>
-        <h2>JSONg</h2>
+        <h2 className={style.title}>JSONg</h2>
+        <div>
         <span className={style.progress} style={{
             '--progress': isPlaying ? (1+loopProgress[0]) / loopProgress[1] : 0
         } as CSSProperties}>
@@ -51,12 +52,13 @@ export default function PlayerNav({show=true, pending=false}){
         </span>
      
         <button onClick={()=>{player.stop()}}>Stop</button>
-        <span className={'material-symbols-outlined'} onClick={()=>{
+        <span className={clsx('material-symbols-outlined', style.vol)} onClick={()=>{
             setIsMute(m => {
                 if(!m) player.muteAll()
                 else player.unMuteAll()
                 return !m;
             })
         }}>{isPlaying && !isMute ? 'volume_up' : 'volume_off'}</span>
+        </div>
     </nav>
 }

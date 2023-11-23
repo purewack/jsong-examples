@@ -1,35 +1,55 @@
 
 .nav {
+    transition: all 1s;
     position: absolute;
+    z-index: 100;
     top:0;
     left:0;
     right:0;
     padding: 0.25rem;
-    display: flex;
+    display: grid;
+    grid-template-rows: min-content;
+    grid-template-columns: min-content 1fr;
     gap: 1rem;
     font-family: 'Josefin Sans', sans-serif;
 }
 .nav::before{
+    transition: background-color 1s;
     content: '';
     width:100%;
     height:100%;
     left:0;
     top:0;
     position: absolute;
-    background-color: ivory;
+    /* background-color: ivory; */
     z-index: 0;
 }
 .nav * {
     z-index: 1;
 }
+.nav div {
+    transition: all 1s;
+    overflow: hidden;
+    display: flex;
+}
 .nav button:first-child {
     margin-left: auto;
 }
 
-
-.nav {
-    transition: transform 1s;
+.nav div{
+    /* grid-template-columns: min-content 0fr; */
+    opacity: 0.1;
 }
+.nav:hover div,
+.nav.full div{
+    /* grid-template-columns: min-content 1fr; */
+    opacity: 1;
+}
+.nav:hover::before {
+    background-color: ivory;
+}
+
+
 .nav:not(.show) {
     position: absolute;
     transform: translateY(-100%);
@@ -44,6 +64,7 @@
     flex-grow: 1;
     position:relative;
     z-index: 1;
+    white-space: nowrap;
 }
 
 .progress::after{
@@ -59,4 +80,8 @@
 }
 .nav.pending .progress::after{
     background:yellow;
+}
+
+.vol{
+    cursor:pointer;
 }
