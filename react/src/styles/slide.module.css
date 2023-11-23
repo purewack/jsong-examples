@@ -37,9 +37,10 @@
     animation: enter 1s forwards;
 }
 .next.down{
-    bottom: 0;
+    top: 100vh;
+    top: 100dvh;
     left: 50%;
-    transform: translateX(-50%) rotate(90deg);
+    transform: translate(-50%,-100%) rotate(90deg);
 }
 .next.right{
     top:50%;

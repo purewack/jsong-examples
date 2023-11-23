@@ -1,7 +1,7 @@
 
 .nav {
     transition: all 1s;
-    position: absolute;
+    position: fixed;
     z-index: 100;
     top:0;
     left:0;
@@ -46,7 +46,10 @@
     opacity: 1;
 }
 .nav:hover::before {
-    background-color: ivory;
+    background-color: black;
+}
+.nav:hover {
+    color: white;
 }
 
 
