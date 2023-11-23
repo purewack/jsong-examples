@@ -12,6 +12,13 @@
     background-color: lightpink;
 }
 
+.bg{
+    transition: background-color 1s;
+}
+.bg:not(.done) {
+    background-color: white;
+}
+
 /* .waiting > * {
     transition: opacity 1s;
 }

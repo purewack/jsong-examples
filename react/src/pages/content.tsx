@@ -40,6 +40,8 @@ export default function Content({introDone}:{introDone: boolean}){
       // console.log('content', e.detail.loopBeatPosition)
     }
 
+    setNavList(n => {return {...n, intro: true}})
+
     player.addEventListener('onSectionWillStart', willStart);
     player.addEventListener('onSectionDidStart', didStart);
     player.addEventListener('onTransport', transport);
@@ -82,7 +84,8 @@ export default function Content({introDone}:{introDone: boolean}){
           <SectionNext />
         </SectionSlide>
 
-        <SectionSlide style={{display: !secActiveB ? 'none' : undefined}} onInView={()=>{sectionInView([1])}} className={clsx(style.B)}>
+        <SectionSlide style={{display: !secActiveB ? 'none' : undefined}} onInView={()=>{sectionInView([1])}} 
+        className={clsx(navList.intro2 && style.done, style.bg, style.B)}>
           <h1 className={'title'}>
             ...responding to your actions!
           </h1>
@@ -90,14 +93,16 @@ export default function Content({introDone}:{introDone: boolean}){
         </SectionSlide>
 
         {<SectionSlide style={{display: !secActiveC ? 'none' : undefined}} type="side" >
-          <SectionSlide onInView={()=>{sectionInView([3])}} className={clsx(style.C)}>
+          <SectionSlide onInView={()=>{sectionInView([3])}} 
+          className={clsx(navList.bridge && style.done, style.bg, style.C)}>
             <h1 className={'title'}>
               JSONg audio format allows for multiple tracks.
             </h1>
             {navList.bridge && <SectionNext direction="right"/>}
           </SectionSlide>
 
-          {<SectionSlide style={{display: !secActiveD ? 'none' : undefined}} onInView={()=>{sectionInView([4])}} className={clsx(style.D)}> 
+          {<SectionSlide style={{display: !secActiveD ? 'none' : undefined}} onInView={()=>{sectionInView([4])}} 
+          className={clsx(navList.chorus && style.done, style.bg, style.D)}> 
             <h1 className={'title'}>
               Music playback can be changed dynamically.
             </h1>
