@@ -46,10 +46,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const path = usePathname();
 
+  const [introDone, setIntroDone] = useState(false)
+
   return ready && player && <>
     <PlayerContext.Provider value={player}>
       <PlayerNav show={path !== '/'} pending={pending}/>
-      <Component {...pageProps} pending={pending}/>
+      <Component {...pageProps} introDone={introDone} setIntroDone={setIntroDone}/>
     </PlayerContext.Provider>
   </>
 }

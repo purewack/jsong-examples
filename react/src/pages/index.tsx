@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { PlayerContext } from './_app';
 import JSONg from 'jsong-audio';
 
-export default function Home() {
+export default function Home({setIntroDone}) {
 
   const player = useContext(PlayerContext) as JSONg;
 
@@ -23,6 +23,7 @@ export default function Home() {
         <button className={styles.button}
         onClick={()=>{
           player.play();
+          setIntroDone(true);
         }} 
         >Let&apos;s hear it!</button>
         </Link>

@@ -6,8 +6,14 @@ import clsx from "clsx";
 import SectionSlide from "@/components/SectionSlide";
 import JSONg from "jsong-audio";
 import SectionNext from "@/components/SectionNext";
+import { useRouter } from "next/router";
 
-export default function Content(){
+export default function Content({introDone}:{introDone: boolean}){
+  const router = useRouter()
+  useEffect(()=>{
+    console.log('introDone', introDone)
+    if(!introDone) router.push('/');
+  },[introDone])
 
   const [navList, setNavList] = useState({
     intro: false,
@@ -18,14 +24,14 @@ export default function Content(){
   
   const player = useContext(PlayerContext) as JSONg;
   const [nowPlaying, setNowPlaying] = useState('');
-  const [pending, setPending] = useState(false);
+  const [playingPending, setPlayingPending] = useState(false);
   useEffect(()=>{
     const willStart = () => {
-        setPending(true);
+        setPlayingPending(true);
     }
     const didStart = () => {
         setNowPlaying(player.playingNow?.name)
-        setPending(false);
+        setPlayingPending(false);
         setNavList(l => {
           return {...l, [player.playingNow.name]: true}
         })
@@ -42,7 +48,7 @@ export default function Content(){
       player.removeEventListener('onSectionDidStart', didStart);
       player.removeEventListener('onTransport', transport);
     }
-},[])
+},[player])
 
   const sectionInView = (section: number[])=>{
     player.play(section)
@@ -55,7 +61,7 @@ export default function Content(){
   return (
     <>
       <Head>
-        <title>JSONg Audio: {pending ? '...' : ''}{nowPlaying}</title>
+        <title>JSONg Audio: {playingPending ? '...' : ''}{nowPlaying}</title>
       </Head>
 
       <nav className={style.nav}>
