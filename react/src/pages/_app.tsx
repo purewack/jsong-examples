@@ -20,9 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(()=>{
     if(!player) return 
-    player.parse('test_song2').then((reason)=>{
-      setReady(true);
-    })
+    setReady(true);
     const willstart = ()=>{
       setPending(true);
     }

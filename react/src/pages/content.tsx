@@ -61,7 +61,7 @@ export default function Content({introDone}:{introDone: boolean}){
   const secActiveD = navList.intro && navList.intro2 && navList.bridge
   
   return (
-    <>
+    <div className={clsx('pageenter')}>
       <Head>
         <title>JSONg Audio: {playingPending ? '...' : ''}{nowPlaying}</title>
       </Head>
@@ -109,6 +109,6 @@ export default function Content({introDone}:{introDone: boolean}){
           </SectionSlide>}
         </SectionSlide>}
       </SectionSlide>
-    </>
+    </div>
   )
 }

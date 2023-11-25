@@ -5,33 +5,42 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { PlayerContext } from './_app';
 import JSONg from 'jsong-audio';
+import clsx from 'clsx';
 
 export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateAction<boolean>>}) {
 
   const player = useContext(PlayerContext) as JSONg;
 
-  const StartButton = ({children} : {children : ReactNode})=><button className={styles.button}
+  const [exiting, setExiting] = useState(false);
+
+  const StartButton = ({children, song} : {children : ReactNode, song: string})=><button className={styles.button}
   onClick={()=>{
-    player.play();
     setIntroDone(true);
+    player.parse(song).then(()=>{
+      player.play();
+    })
   }} 
   >{children}</button>
+
+  useEffect(()=>{
+    player.stop(0)
+  },[])
 
   return (
     <>
       <Head>
         <title>JSONg Audio</title>
       </Head>
-      <main className={'fullpage central'}>
+      <main className={clsx(styles.story, 'pageenter', 'fullpage', 'central')}>
         <h1 className={'title'}>
           What is JSONg Audio?
         </h1>
         <Link href="content">
-          <StartButton >Let&apos;s hear it!</StartButton>
+          <StartButton song='test_song2'>Let&apos;s hear it!</StartButton>
         </Link>
         <span>- or -</span>
         <Link href="story">
-          <StartButton >Hear use case</StartButton>
+          <StartButton song='test_song'>Hear use case</StartButton>
         </Link>
         {/* <button className={styles.button}
         onClick={()=>{
