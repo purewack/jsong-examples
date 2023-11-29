@@ -4,62 +4,106 @@ import styles from '@/styles/story.module.css'
 import Image from "next/image";
 import clsx from "clsx";
 import { PlayerContext } from "./_app";
+import { InViewHookResponse, useInView } from "react-intersection-observer";
+import JSONg from "jsong-audio";
+import InViewContainer from "@/components/InViewContainer";
 
 export default function Story({introDone}: {introDone:boolean}){
+    const player = useContext(PlayerContext) as JSONg;
     const router = useRouter()
     useEffect(()=>{
         console.log('introDone', introDone)
         if(!introDone) router.push('/');
     },[introDone])
 
-    const player = useContext(PlayerContext);
+    const {
+        ref,
+        inView,
+        entry
+    } : InViewHookResponse = useInView({threshold: 0.8})
 
     return <div className={clsx(styles.story, 'pageenter')}>
         {/* <button onClick={()=>{player?.play()}}>Next</button> */}
 
+        <section className="fullpage central">
         <h1>Once upon a time...</h1>
+        </section>
+
+        <InViewContainer once onInView={()=>{
+            player.play().then(()=>{
+                player.rampTrackVolume('lead', -24,0);
+                player.rampTrackVolume('guitar',-9,0);
+
+                player.rampTrackFilter('drums',0.02,0);
+                player.rampTrackFilter('bass',0.02,0);
+                player.rampTrackFilter('lead',0.10,0);
+                player.rampTrackFilter('guitar',0.10,0);
+            })
+        }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>There lived a guy called Frank</p>
             <img alt='groovy' src={'images/groovy.svg'}/>
         </section>
+        </InViewContainer>
         
+        <InViewContainer once onInView={()=>{
+            player.rampTrackFilter('drums',1, '2m')
+            player.rampTrackFilter('bass',1, '2m')
+        }} >
         <section className={clsx(styles.A,styles.blob)}>
-        <Divider/>
-        <div className={ styles.sideways }>
-            <img alt='dancing' src={'images/dancing.svg'}/>
-            <p>Frank loved to listen to music</p>
-        </div>
-        <Divider/>
+            <Divider/>
+            <div className={ styles.sideways }>
+                <img alt='dancing' src={'images/dancing.svg'}/>
+                <p>Frank loved to listen to music</p>
+            </div>
+            <Divider/>
         </section> 
+        </InViewContainer>
         
+        <InViewContainer once onInView={()=>{
+            player.rampTrackVolume('guitar',9,1)
+            player.rampTrackFilter('guitar',1, 2)
+        }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>When he did not walk...</p>
             <img alt='dancing' src={'images/strolling.svg'}/>
         </section>
+        </InViewContainer>
 
         <section className={clsx(styles.B,styles.blob)}>
-        <Divider/>
-        <div className={ styles.sideways }>
-            <img alt='ballet' src={'images/ballet.svg'}/>
-            <p>He was lost in dance</p>
-        </div>
-        <Divider alt/>
+            <Divider/>
+            <div className={ styles.sideways }>
+                <img alt='ballet' src={'images/ballet.svg'}/>
+                <p>He was lost in dance</p>
+            </div>
+            <Divider alt/>
         </section>
 
+        <InViewContainer once onInView={()=>{
+            player.rampTrackVolume('lead',0,2)
+            player.rampTrackFilter('lead',1, 3)
+        }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>There was not a day where he would skip music</p>
             <img alt='jumping' src={'images/jumping.svg'}/>
         </section>
+        </InViewContainer>
         
+        <InViewContainer once onInView={()=>{
+            player.rampTrackFilter('drums',0.01,2)
+            player.play().then(()=>{
+                player.rampTrackFilter('drums',1,0)
+            })
+        }} >
         <section className={clsx(styles.C,styles.blob)}>
-        <Divider alt/>
-        <div className={ styles.sideways }>
-            <img alt='selfie' src={'images/selfie.svg'}/>
-            <p>It was in his soul, which he shared with love</p>
-        </div>
-        <Divider/>
+            <Divider alt/>
+            <div className={ styles.sideways }>
+                <img alt='selfie' src={'images/selfie.svg'}/>
+                <p>It was in his soul, which he shared with love</p>
+            </div>
+            <Divider/>
         </section>
-
+        </InViewContainer>
         
     </div>
 }

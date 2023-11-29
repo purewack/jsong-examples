@@ -13,10 +13,11 @@ export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateA
 
   const [exiting, setExiting] = useState(false);
 
-  const StartButton = ({children, song} : {children : ReactNode, song: string})=><button className={styles.button}
+  const StartButton = ({children, song, auto = true} : {children : ReactNode, song: string})=><button className={styles.button}
   onClick={()=>{
     setIntroDone(true);
     player.parse(song).then(()=>{
+      if(auto)
       player.play();
     })
   }} 
@@ -36,11 +37,11 @@ export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateA
           What is JSONg Audio?
         </h1>
         <Link href="content">
-          <StartButton song='test_song2'>Let&apos;s hear it!</StartButton>
+          <StartButton song='test_song2' >Let&apos;s hear it!</StartButton>
         </Link>
         <span>- or -</span>
         <Link href="story">
-          <StartButton song='test_song'>Hear use case</StartButton>
+          <StartButton song='test_song' auto={false}>Hear use case</StartButton>
         </Link>
         {/* <button className={styles.button}
         onClick={()=>{

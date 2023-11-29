@@ -17,7 +17,7 @@
     "totalMeasures": 16,
     "grain": 4,
     "map": {
-      "intro" : { "region": [0, 4]},
+      "intro" : { "region": [0, 4], "grain": 16},
       "chorus" : { "region": [4, 8], "grain": 8},
       "verse1" : { "region": [8, 12], "grain": 4},
       "bridge1" : { "region": [12, 16], "grain": 4}
@@ -27,7 +27,11 @@
       "chorus", 
       "verse1", 
       "bridge1" 
-    ]
+    ],
+    "filter": {
+      "rolloff": -24,
+      "resonance": 3
+    }
   },
   "tracks": [
     {
