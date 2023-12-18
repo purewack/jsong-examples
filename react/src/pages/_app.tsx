@@ -39,6 +39,8 @@ export default function App({ Component, pageProps }: AppProps) {
       player.removeEventListener('onSectionWillStart', willstart);
       player.removeEventListener('onSectionDidStart', didstart);
       player.removeEventListener('onSectionCancelChange', cancelstart);
+      player.stop(0);
+      setPlayer(null);
     }
   },[player])
 

@@ -2,6 +2,13 @@
     padding-top: 3rem;
 }
 
+.story section {
+    margin-block: 30vh;
+}
+.story section:first-of-type {
+    margin-top: 0;
+}
+
 .story * {
     font-family: 'Ephesis', cursive;
     font-size: 2rem;

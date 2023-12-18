@@ -19,7 +19,7 @@ export default function SectionSlide({type = 'slide', className='', onInView, on
    
     useEffect(()=>{
         if(inView) {
-            console.log(tag)
+            // console.log(tag)
             onInView?.(tag)
         }
     },[inView])

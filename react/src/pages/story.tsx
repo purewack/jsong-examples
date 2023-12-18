@@ -22,23 +22,30 @@ export default function Story({introDone}: {introDone:boolean}){
         entry
     } : InViewHookResponse = useInView({threshold: 0.8})
 
-    return <div className={clsx(styles.story, 'pageenter')}>
+    return introDone && <div className={clsx(styles.story, 'pageenter')}>
         {/* <button onClick={()=>{player?.play()}}>Next</button> */}
 
-        <section className="fullpage central">
-        <h1>Once upon a time...</h1>
-        </section>
+        <InViewContainer once onInView={async ()=>{
+            await player.parse('test_song')
+            
+            // player.rampTrackVolume('lead', -24,0);
+            // player.rampTrackVolume('guitar',-9,0);
+
+            // player.rampTrackFilter('drums',0.02,0);
+            // player.rampTrackFilter('bass',0.02,0);
+            // player.rampTrackFilter('lead',0.10,0);
+            // player.rampTrackFilter('guitar',0.10,0);
+
+            await player.play()
+
+        }}>
+            <section className="fullpage central">
+            <h1>Once upon a time...</h1>
+            </section>
+        </InViewContainer>
 
         <InViewContainer once onInView={()=>{
-            player.play().then(()=>{
-                player.rampTrackVolume('lead', -24,0);
-                player.rampTrackVolume('guitar',-9,0);
-
-                player.rampTrackFilter('drums',0.02,0);
-                player.rampTrackFilter('bass',0.02,0);
-                player.rampTrackFilter('lead',0.10,0);
-                player.rampTrackFilter('guitar',0.10,0);
-            })
+            
         }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>There lived a guy called Frank</p>
@@ -89,11 +96,10 @@ export default function Story({introDone}: {introDone:boolean}){
         </section>
         </InViewContainer>
         
-        <InViewContainer once onInView={()=>{
+        <InViewContainer once onInView={async ()=>{
             player.rampTrackFilter('drums',0.01,2)
-            player.play().then(()=>{
-                player.rampTrackFilter('drums',1,0)
-            })
+            await player.play()
+            player.rampTrackFilter('drums',1,0)
         }} >
         <section className={clsx(styles.C,styles.blob)}>
             <Divider alt/>
