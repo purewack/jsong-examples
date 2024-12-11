@@ -5,7 +5,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { PlayerContext } from "./_app";
 import { InViewHookResponse, useInView } from "react-intersection-observer";
-import JSONg from "jsong-audio";
+import JSONg from "jsong-audio/src";
 import InViewContainer from "@/components/InViewContainer";
 
 export default function Story({introDone}: {introDone:boolean}){
@@ -26,7 +26,6 @@ export default function Story({introDone}: {introDone:boolean}){
         {/* <button onClick={()=>{player?.play()}}>Next</button> */}
 
         <InViewContainer once onInView={async ()=>{
-            await player.parse('test_song')
             
             // player.rampTrackVolume('lead', -24,0);
             // player.rampTrackVolume('guitar',-9,0);
@@ -35,8 +34,6 @@ export default function Story({introDone}: {introDone:boolean}){
             // player.rampTrackFilter('bass',0.02,0);
             // player.rampTrackFilter('lead',0.10,0);
             // player.rampTrackFilter('guitar',0.10,0);
-
-            await player.play()
 
         }}>
             <section className="fullpage central">
@@ -54,8 +51,8 @@ export default function Story({introDone}: {introDone:boolean}){
         </InViewContainer>
         
         <InViewContainer once onInView={()=>{
-            player.rampTrackFilter('drums',1, '2m')
-            player.rampTrackFilter('bass',1, '2m')
+            // player.rampTrackFilter('drums',1, '2m')
+            // player.rampTrackFilter('bass',1, '2m')
         }} >
         <section className={clsx(styles.A,styles.blob)}>
             <Divider/>
@@ -68,8 +65,8 @@ export default function Story({introDone}: {introDone:boolean}){
         </InViewContainer>
         
         <InViewContainer once onInView={()=>{
-            player.rampTrackVolume('guitar',9,1)
-            player.rampTrackFilter('guitar',1, 2)
+            // player.rampTrackVolume('guitar',9,1)
+            // player.rampTrackFilter('guitar',1, 2)
         }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>When he did not walk...</p>
@@ -87,8 +84,8 @@ export default function Story({introDone}: {introDone:boolean}){
         </section>
 
         <InViewContainer once onInView={()=>{
-            player.rampTrackVolume('lead',0,2)
-            player.rampTrackFilter('lead',1, 3)
+            // player.rampTrackVolume('lead',0,2)
+            // player.rampTrackFilter('lead',1, 3)
         }} >
         <section className={clsx(styles.sideways, styles.long)}>            
             <p>There was not a day where he would skip music</p>
@@ -97,9 +94,9 @@ export default function Story({introDone}: {introDone:boolean}){
         </InViewContainer>
         
         <InViewContainer once onInView={async ()=>{
-            player.rampTrackFilter('drums',0.01,2)
-            await player.play()
-            player.rampTrackFilter('drums',1,0)
+            // player.rampTrackFilter('drums',0.01,2)
+            // await player.play()
+            // player.rampTrackFilter('drums',1,0)
         }} >
         <section className={clsx(styles.C,styles.blob)}>
             <Divider alt/>

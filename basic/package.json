@@ -5,7 +5,8 @@
     "browserslist": "> 0.5%, last 2 versions, not dead",
     "scripts": {
       "clean": "rm -r .parcel-cache dist",
-      "start": "parcel index.html --open",
+      "dev_link": "npm link ../../jsong-audio",
+      "dev": "npm run dev_link && parcel index.html --open",
       "build": "parcel build index.html"
     },
     "dependencies": {

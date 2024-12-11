@@ -1,6 +1,6 @@
 {
   "type": "jsong",
-  "jsongVersion":"0.0.1",
+  "version": "J/1",
   "meta": {
     "title": "Test",
     "author": "Damian Nowacki",
@@ -17,10 +17,10 @@
     "totalMeasures": 16,
     "grain": 4,
     "map": {
-      "intro" : { "region": [0, 4], "grain": 16},
-      "chorus" : { "region": [4, 8], "grain": 8},
-      "verse1" : { "region": [8, 12], "grain": 4},
-      "bridge1" : { "region": [12, 16], "grain": 4}
+      "intro" : [0, 4],
+      "chorus" :[4, 8],
+      "verse1" : [8, 12],
+      "bridge1" : [12, 16]
     },
     "flow": [
       "intro", 
@@ -52,8 +52,8 @@
     }
   ],
   "sources" : {
-    "bass" : "test_bass.mp3",
-    "drums" : "test_drums.mp3",
+    "bass" : "./test_bass.mp3",
+    "drums" : "./test_drums.mp3",
     "guitar": "./test_guitar.mp3",
     "lead" : "./test_lead.mp3"
   }

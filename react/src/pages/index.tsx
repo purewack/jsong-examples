@@ -4,7 +4,7 @@ import { Dispatch, ReactNode, SetStateAction, useContext, useEffect, useRef, use
 import Head from 'next/head';
 import Link from 'next/link';
 import { PlayerContext } from './_app';
-import JSONg from 'jsong-audio';
+import JSONg from 'jsong-audio/src';
 import clsx from 'clsx';
 
 export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateAction<boolean>>}) {
@@ -13,18 +13,20 @@ export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateA
 
   const [exiting, setExiting] = useState(false);
 
-  const StartButton = ({children, song, auto = true} : {children : ReactNode, song: string})=><button className={styles.button}
-  onClick={()=>{
+  const StartButton = ({children, song, auto = true} : {children : ReactNode, song: string, auto?: boolean})=><button className={styles.button}
+  onClick={async ()=>{
     setIntroDone(true);
-    player.parse(song).then(()=>{
-      if(auto)
-      player.play();
-    })
+    console.warn(song)
+    const m = await player.parseManifest(song)
+    if(m)
+    await player.loadManifest(m)
+    if(auto)
+    player.play();
   }} 
   >{children}</button>
 
   useEffect(()=>{
-    player.stop(0)
+    // player.stop(false)
   },[])
 
   return (
@@ -37,11 +39,11 @@ export default function Home({setIntroDone} : {setIntroDone : Dispatch<SetStateA
           What is JSONg Audio?
         </h1>
         <Link href="content">
-          <StartButton song='test_song2' >Let&apos;s hear it!</StartButton>
+          <StartButton song='test_song' >Let&apos;s hear it!</StartButton>
         </Link>
         <span>- or -</span>
         <Link href="story">
-          <StartButton song='test_song' auto={false}>Hear use case</StartButton>
+          <StartButton song='test_song2'>Hear use case</StartButton>
         </Link>
         {/* <button className={styles.button}
         onClick={()=>{

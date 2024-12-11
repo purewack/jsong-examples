@@ -2,8 +2,7 @@ import PlayerNav from '@/components/PlayerNav'
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Dispatch, MutableRefObject, SetStateAction, createContext, use, useEffect, useReducer, useRef, useState } from 'react'
-import JSONg from 'jsong-audio';
-import { VerboseLevel } from 'jsong-audio/dist/JSONg';
+import JSONg from 'jsong-audio/src';
 import { usePathname } from 'next/navigation';
 
 export const PlayerContext = createContext<JSONg | null>(null)
@@ -15,7 +14,11 @@ export default function App({ Component, pageProps }: AppProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(()=>{
-    setPlayer(new JSONg(VerboseLevel.all))
+    const player = new JSONg()
+    player.addEventListener('state',(ev)=>{
+      console.log("STATE", ev.stateNow)
+    })
+    setPlayer(player)
   },[])
 
   useEffect(()=>{
@@ -31,15 +34,15 @@ export default function App({ Component, pageProps }: AppProps) {
     const cancelstart = ()=>{
       setPending(false);
     }
-    player.addEventListener('onSectionWillStart', willstart);
-    player.addEventListener('onSectionDidStart', didstart);
-    player.addEventListener('onSectionCancelChange', cancelstart);
+    // player.addEventListener('onSectionWillStart', willstart);
+    // player.addEventListener('onSectionDidStart', didstart);
+    // player.addEventListener('onSectionCancelChange', cancelstart);
 
     return ()=>{
-      player.removeEventListener('onSectionWillStart', willstart);
-      player.removeEventListener('onSectionDidStart', didstart);
-      player.removeEventListener('onSectionCancelChange', cancelstart);
-      player.stop(0);
+      // player.removeEventListener('onSectionWillStart', willstart);
+      // player.removeEventListener('onSectionDidStart', didstart);
+      // player.removeEventListener('onSectionCancelChange', cancelstart);
+      player.stop(false)
       setPlayer(null);
     }
   },[player])

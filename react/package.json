@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev_link": "npm link ../../jsong-audio",
+    "dev": "npm run dev_link && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

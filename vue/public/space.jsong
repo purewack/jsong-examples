@@ -1,0 +1,46 @@
+{
+    "type":"jsong",
+    "version":"J/1",
+    "meta":{
+        "title":"space-time",
+        "author": "Damian Nowacki",
+        "created": 1733785407,
+        "modified": 1733785407,
+        "version": "1.0.0"
+    },
+    "playback": {
+        "bpm": 160,
+        "meter": [4,4],
+        "grain": 16,
+        "map": {
+            "idle": [0,4],
+            "countdown1": [4,8],
+            "countdown1end": [8,12],
+            "verse1":[12,16],
+            "trans1": [16,20],
+            "trans1end": [20,24],
+            "bridge1": [24,28],
+            "bridge1end":[28,32],
+            "chorus": [32,36]
+        },
+        "flow":[
+            "idle->",
+            ["countdown1",
+            "countdown1end->",
+            "verse1",
+            "trans1-X",
+            "trans1end->",
+            "bridge1-X",
+            "bridge1end->",
+            "chorus"] 
+        ]    
+    },
+    "tracks": [
+        {"name":"body"},
+        {"name":"extra"}    
+    ],
+    "sources": {
+        "body": "./body.mp3",
+        "extra":"./extra.mp3"    
+    }
+}

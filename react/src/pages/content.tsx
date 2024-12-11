@@ -4,7 +4,7 @@ import { PlayerContext } from "./_app"
 import style from '@/styles/content.module.css'
 import clsx from "clsx";
 import SectionSlide from "@/components/SectionSlide";
-import JSONg from "jsong-audio";
+import JSONg from "jsong-audio/src";
 import SectionNext from "@/components/SectionNext";
 import { useRouter } from "next/router";
 

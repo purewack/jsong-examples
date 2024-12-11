@@ -1,22 +1,23 @@
-import JSONg from "jsong-audio";
+import JSONg from 'jsong-audio/src'
 
 const loaderLabel = document.getElementById("loader");
 loaderLabel.innerText = 'Loading...'
 
-const player = new JSONg(true)
+const player = new JSONg(undefined,"all")
 
 const songLoad = (song)=>{
-player.parse(song + '/audio.jsong', song).then((full)=>{
+player.loadManifest(song + '/audio.jsong').then((full)=>{
   loaderLabel.innerText = full ? 'Ready' : 'Partial Load'
 }).catch((reason, data)=>{
+  console.log("LOAD error",reason)
   if(reason === 'loading')
     loaderLabel.innerText = 'Error loading audio files'
-  else if(reason === 'manifest') {
-    loaderLabel.innerText = 'Error parsing .jsong file'
+  else{
+    loaderLabel.innerText = 'Error parsing json file'
   }
 })
 }
-songLoad('test_song')
+songLoad('sample')
 
 
 const state = document.getElementById("state")
