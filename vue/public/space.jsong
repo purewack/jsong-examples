@@ -16,23 +16,23 @@
             "idle": [0,4],
             "countdown1": [4,8],
             "countdown1end": [8,12],
-            "verse1":[12,16],
-            "trans1": [16,20],
-            "trans1end": [20,24],
+            "avoid":[12,16],
+            "change1": [16,20],
+            "change1end": [20,24],
             "bridge1": [24,28],
             "bridge1end":[28,32],
-            "chorus": [32,36]
+            "battle": [32,36]
         },
         "flow":[
             "idle->",
             ["countdown1",
             "countdown1end->",
-            "verse1",
-            "trans1-X",
-            "trans1end->",
+            "avoid",
+            "change1-X",
+            "change1end->",
             "bridge1-X",
             "bridge1end->",
-            "chorus"] 
+            "battle"] 
         ]    
     },
     "tracks": [

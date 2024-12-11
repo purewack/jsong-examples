@@ -16,14 +16,14 @@ const router = useRouter()
 // })
 
 function audioOk(){
-  // player.parseManifest('space.jsong').then(m => {
-  //   console.log(m)
-  //   player.useManifest(m).then(()=>{
-  //     loaded.value = true
-  //     player.play()
-  //     player.trackVolumeControls['extra'].volume.value = -200
-  //   })
-  // })
+  player.parseManifest('space.jsong').then(m => {
+    console.log(m)
+    player.useManifest(m).then(()=>{
+      loaded.value = true
+      player.play()
+      player.trackVolumeControls['extra'].volume.value = -200
+    })
+  })
 }
 </script>
 
