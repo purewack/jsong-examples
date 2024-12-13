@@ -14,30 +14,32 @@
         "grain": 16,
         "map": {
             "idle": [0,4],
-            "countdown1": [4,8],
+            "countdown": [4,8],
+            "countdown_short": [5,6],
             "countdown1end": [8,12],
             "avoid":[12,16],
             "change1": [16,20],
             "change1end": [20,24],
+            "change_all": [16,24],
             "bridge1": [24,28],
             "bridge1end":[28,32],
             "battle": [32,36]
         },
         "flow":[
-            "idle->",
-            ["countdown1",
-            "countdown1end->",
-            "avoid",
-            "change1-X",
-            "change1end->",
-            "bridge1-X",
-            "bridge1end->",
-            "battle"] 
+            "idle-X",
+            [
+                "avoid",
+                "change1",
+                "change1end->",
+                "bridge1",
+                "bridge1end->",
+                "battle"
+            ]
         ]    
     },
     "tracks": [
-        {"name":"body"},
-        {"name":"extra"}    
+        {"name":"body", "audioOffsetSeconds":0.05},
+        {"name":"extra", "audioOffsetSeconds":0.05}
     ],
     "sources": {
         "body": "./body.mp3",

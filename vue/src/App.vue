@@ -3,17 +3,18 @@ import {RouterView, useRouter} from 'vue-router'
 import JSONg from "jsong-audio"
 import { onMounted, provide, ref } from "vue";
 
-// const loaded = ref(false)
-const loaded = ref(true)
+const loaded = ref(false)
+// const loaded = ref(true)
 
 const player = new JSONg()
 provide('jsong',player)
 
 const router = useRouter()
-// onMounted(async ()=>{
-//   loaded.value = false
-//   router.push('/')
-// })
+onMounted(async ()=>{
+  loaded.value = false
+  router.push('/')
+  player.continue([0])
+})
 
 function audioOk(){
   player.parseManifest('space.jsong').then(m => {
@@ -21,7 +22,7 @@ function audioOk(){
     player.useManifest(m).then(()=>{
       loaded.value = true
       player.play()
-      player.trackVolumeControls['extra'].volume.value = -200
+      // player.trackVolumeControls['extra'].volume.value = -200
     })
   })
 }
