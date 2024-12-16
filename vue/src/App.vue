@@ -2,17 +2,18 @@
 import {RouterView, useRouter} from 'vue-router'
 import JSONg from "jsong-audio"
 import { onMounted, provide, ref } from "vue";
+import Phaser from './game/Phaser.vue';
 
-const loaded = ref(false)
-// const loaded = ref(true)
+// const loaded = ref(false)
+const loaded = ref(true)
 
 const player = new JSONg()
 provide('jsong',player)
 
 const router = useRouter()
 onMounted(async ()=>{
-  loaded.value = false
-  router.push('/')
+  // loaded.value = false
+  // router.push('/')
   player.continue([0])
 })
 
@@ -46,6 +47,7 @@ function audioOk(){
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 body {
   color: white;
