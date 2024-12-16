@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script setup>
 import { inject, onMounted, onUnmounted, ref, watch } from 'vue';
 import JSONg from 'jsong-audio';
 import Phaser from 'phaser';
 import { usePointer } from '@vueuse/core';
-import { ChangeEvent } from 'jsong-audio/dist/types/events';
+import { ChangeEvent, QueueEvent } from 'jsong-audio/dist/types/events';
 
-const jsong = inject('jsong') as JSONg
+const jsong = inject('jsong')
 const canvas = ref()
 const canvasClass = ref('')
 
@@ -16,23 +16,23 @@ const killCount = ref(0)
 const killTarget = ref(20)
 const gamePhase = ref('avoid')
 const gamePhaseChange = ref(false)
-const game = ref<Phaser.Game>()
+const game = ref()
 
 
 const {x,y} = usePointer()
 
 class PlayerControlScene extends Phaser.Scene {
     cursors;
-    player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;;
+    player;
     portal;    
-    explosion: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    explosion;
     down;
     allowFire = false;
     allowMove = false;
-    playerLasers: Phaser.Physics.Arcade.Group;
+    playerLasers;
     fireTimer;
-    timers: any[] = [];
-    entities: any[] = [];
+    timers = [];
+    entities = [];
 
     preload(){
         this.load.spritesheet('player',
@@ -104,36 +104,6 @@ class PlayerControlScene extends Phaser.Scene {
         
         this.player.rotation = this.player.body.velocity.angle() + Math.PI/2
         
-        if(!this.input.activePointer.buttons){
-            this.down = false;
-            this.fireTimer?.destroy()
-        }
-        if(this.input.activePointer.buttons && !this.down){
-            this.down = true;
-            if(gamePhase.value === 'capture'){
-                this.player.setAccelerationY(75)
-                const t = this.time.addEvent({
-                    delay: 100,
-                    callback: ()=>{
-                        this.player.setAccelerationY(-25)
-                    }
-                })
-                return
-            }
-            else if(this.allowFire){
-            this.fireTimer =  this.time.addEvent({
-                delay: (1000 * 60 / 160),
-                repeat: -1,
-                callback: ()=>{
-                    if(energy.value <= 30) return
-                    if(this.cursors.shift.isDown)
-                        this.fireBurst()
-                    else
-                        this.fireBullet()
-                }
-            })
-            }
-        }
     }
 
     playerReset(){
@@ -183,7 +153,7 @@ class PlayerControlScene extends Phaser.Scene {
         this.entities.push(...r)
     }
 
-    animateSpawn(){
+    animateSpawn(duration = 4000){
         return new Promise((res)=>{
         this.portal.visible = true
         this.portal.setPosition(128,128)
@@ -192,7 +162,7 @@ class PlayerControlScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.portal,
             scale: '+=1',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
             yoyo: true,
         }); 
@@ -203,11 +173,11 @@ class PlayerControlScene extends Phaser.Scene {
         const t = this.tweens.add({
             targets: this.player,
             scale: '+=1',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
         }); 
         const e = this.time.addEvent({
-            delay: 4000,
+            delay: duration,
             callback: ()=>{
                 res(true)
             }
@@ -216,7 +186,7 @@ class PlayerControlScene extends Phaser.Scene {
         })
     }
 
-    animateFlyin(){
+    animateFlyin(duration = 1500){
         return new Promise((res)=>{
         this.playerReset()
         this.player.setCollideWorldBounds(false)
@@ -225,11 +195,11 @@ class PlayerControlScene extends Phaser.Scene {
         const t = this.tweens.add({
             targets: this.player,
             y: '-=150',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
         }); 
         const r = this.time.addEvent({
-            delay: 1500,
+            delay: duration,
             callback: ()=>{
                 this.player.setCollideWorldBounds(true)
                 res(true)
@@ -240,8 +210,9 @@ class PlayerControlScene extends Phaser.Scene {
     }
     
 
-    animateDespawn(){
+    animateDespawn(duration = 4000){
         return new Promise((res)=>{
+        this.allowMove = false
         this.portal.x = this.player.x
         this.portal.y = this.player.y
         this.portal.setAngularVelocity(100)
@@ -250,7 +221,7 @@ class PlayerControlScene extends Phaser.Scene {
         const p = this.tweens.add({
             targets: this.portal,
             scale: '+=1',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
             yoyo: true,
         }); 
@@ -259,12 +230,12 @@ class PlayerControlScene extends Phaser.Scene {
         const t  = this.tweens.add({
             targets: this.player,
             scale: '-=1',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
         }); 
         this.fireTimer?.destroy()
         const r = this.time.addEvent({
-            delay: 4000,
+            delay: duration,
             callback: ()=>{
                 res(true)
             }
@@ -273,8 +244,9 @@ class PlayerControlScene extends Phaser.Scene {
         this.timers.push(t,r,p)
         })
     }
-    animateExplode(){ 
+    animateExplode(duration = 2000){ 
         return new Promise((res)=>{
+        this.allowMove = false
         this.explosion.visible = true;
         this.explosion.x = this.player.x
         this.explosion.y = this.player.y
@@ -282,7 +254,7 @@ class PlayerControlScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.explosion,
             scale: '+=1',
-            duration: 1000,
+            duration: duration/2,
             ease: 'Sine.inOut',
             yoyo: true,
         }); 
@@ -292,7 +264,7 @@ class PlayerControlScene extends Phaser.Scene {
         this.player.visible = false;
         this.player.active = false; 
         this.time.addEvent({
-            delay: 2000,
+            delay: duration,
             callback: ()=>{
                 res(true)
             }
@@ -305,11 +277,11 @@ class PlayerControlScene extends Phaser.Scene {
 
 class Game extends PlayerControlScene {
 
-    cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+    cursors;
     
-    player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    player;
 
-    portal: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    portal;
 
     powers;
 
@@ -371,7 +343,7 @@ class Game extends PlayerControlScene {
         this.physics.add.collider(this.obstacles, this.obstacles)
 
         this.exclude.push(wallL, wallR, this.player, this.boss, this.portal, this.explosion)
-        this.createAvoid()
+        this.createCapture(2000)
     }
 
     
@@ -471,9 +443,9 @@ class Game extends PlayerControlScene {
                 this.timers.push(rock)
             }
 
-            for(let i=2; i<5+2; i++){
+            for(let i=2; i<3+2; i++){
                 const power = this.time.addEvent({
-                    delay: 1000 * (i+2),
+                    delay: 2000 * (i+2),
                     callback: ()=>{
                         this.randomPower()
                     }
@@ -483,7 +455,7 @@ class Game extends PlayerControlScene {
         })
         
     }
-    createCapture(){
+    createCapture(duration){
         gamePhase.value = 'capture'
         energy.value = 5;
         health.value = 5;
@@ -496,25 +468,31 @@ class Game extends PlayerControlScene {
         this.player.setVelocityY(-1)
         this.player.setPosition(128,300);
         this.boss.setPosition(128,-40);
+        this.boss.setAngularVelocity(100);
         const t = this.tweens.add({
             targets: this.boss,
             y: '+=70',
-            duration: 2000,
+            duration: duration/2,
             ease: 'Sine.inOut',
         }); 
         this.timers.push(t)
 
-        this.animateFlyin().then(()=>{
+        this.animateFlyin(duration/2).then(()=>{
             this.player.setCollideWorldBounds(false)
-            setTimeout(()=>{
-                this.player.setGravityY(-20);
-                this.player.active = true;
-            },1500)
+            const grav = this.time.addEvent({
+                delay: duration/2,
+                callback: ()=>{
+                    this.player.setGravityY(-10);
+                    this.player.active = true; 
+                }
+            });
+            this.timers.push(grav)
         })
     }
 
     timerReset(){
         this.timers.forEach((t)=>{
+            t.remove()
             t.destroy()
         })
         this.timers = []
@@ -524,6 +502,7 @@ class Game extends PlayerControlScene {
         this.gameActive = true
         this.timerReset()
         this.entities.forEach((t)=>{
+            console.warn("e",t)
             t.destroy()
         })
         this.entities = []
@@ -534,7 +513,11 @@ class Game extends PlayerControlScene {
         );
 
         console.log("toremove",toRemove)
-        toRemove.forEach(o => {o.destroy()})
+        toRemove.forEach(o => {
+            o.removeFromDisplayList()
+            o.removeFromUpdateList()
+            o.destroy()
+        })
         this.player.visible = true;
         this.player.active = true;
         this.player.setAcceleration(0)
@@ -664,8 +647,47 @@ class Game extends PlayerControlScene {
     update(){
 
         if(result.value === '' ){
-            if(energy.value > 0)
+            if(energy.value > 0){
                 this.playerControlUpdate()
+
+                if(!this.input.activePointer.buttons){
+                    this.down = false;
+                    this.fireTimer?.destroy()
+                }
+                if(this.input.activePointer.buttons && !this.down){
+                    this.down = true;
+                    if(gamePhase.value === 'capture'){
+                        console.log("rot",this.boss.rotation)
+                        this.player.setAccelerationY(75)
+                        const t = this.time.addEvent({
+                            delay: 100,
+                            callback: ()=>{
+                                const r = this.boss.rotation
+                                if(r < 0.25 && r > -1){
+                                    this.player.setAccelerationY(-100)
+                                }
+                                else{
+                                    this.player.setAccelerationY(-25)
+                                }
+                            }
+                        })
+                        return
+                    }
+                    else if(this.allowFire){
+                    this.fireTimer =  this.time.addEvent({
+                        delay: (1000 * 60 / 160),
+                        repeat: -1,
+                        callback: ()=>{
+                            if(energy.value <= 30) return
+                            if(this.cursors.shift.isDown)
+                                this.fireBurst()
+                            else
+                                this.fireBullet()
+                        }
+                    })
+                    }
+                }
+            }
 
             this.powers.getChildren().forEach(element => {
                 if(element.y > 300){
@@ -706,18 +728,19 @@ class Game extends PlayerControlScene {
 
         }
 
+        
 
         this.playerLasers.getChildren().forEach(element => {
-            if((element.body.x < -64 ) || (element.body.x > 256+64 )
-            || (element.body.y < -64 ) || (element.body.y > 256+64))
+            if((element.x < -64 ) || (element.x > 256+64 )
+            || (element.y < -64 ) || (element.y > 256+64))
             {
                 element.destroy()
             }
         });
 
         this.enemyLasers.getChildren().forEach(element => {
-            if((element.body.x < -64 ) || (element.body.x > 256+64 )
-            || (element.body.y < -64 ) || (element.body.y > 256+64))
+            if((element.x < -64 ) || (element.x > 256+64 )
+            || (element.y < -64 ) || (element.y > 256+64))
             {
                 element.destroy()
             }
@@ -727,17 +750,19 @@ class Game extends PlayerControlScene {
         if(gamePhase.value === 'avoid' && this.gameActive){
             if(energy.value >= 200 ){
                 this.gameActive = false
-                this.allowMove = false
-                energy.value = 0
-                this.player.setVelocity(0)
-                this.player.setAcceleration(0)
-                this.player.setGravity(0)
                 jsong.continue()
-                this.animateDespawn().then(()=>{
-                })
             }
         }
         if(gamePhase.value === 'capture' && this.gameActive){
+
+            const r = this.boss.rotation
+            if(r < 0.25 && r > -1){
+                // const fx = this.boss.postFX.addGlow(0xffffff, 0, 0, false, 0.1, 32)
+            }
+            else{
+                
+            }
+
             if(this.player.y >= 256+16 && this.player.active ){
                 this.gameActive = false
                 this.playerReset()
@@ -765,15 +790,20 @@ class Game extends PlayerControlScene {
 
 
 onMounted(()=>{
-    jsong.addEventListener('change',(ev: ChangeEvent)=>{
+    jsong.addEventListener('queue',(ev)=>{
+        const timeTo = ev.timeUntil * 1000
+        const s = game.value.scene.getScene('game')
+        if(ev.to?.name === 'bridge1') {
+            s.animateDespawn(timeTo/2).then(()=>{
+                s.createCapture(timeTo/2)
+            })
+            console.log("changing to bridge1 CAPTURE",timeTo)
+        }
+    })
+    jsong.addEventListener('change',(ev)=>{
         console.log("ev",ev.to, ev.from)
-        // if(ev.automatic) {
-        //     console.warn("ignore automatic transition")
-        //     return
-        // }
-        const s = game.value.scene.getScene('game') as Game
+        const s = game.value.scene.getScene('game')
         if(ev.to?.name === 'avoid' && ev.from?.name !== 'idle') s.createAvoid()
-        if(ev.to?.name === 'change1end') s.createCapture()
         if(ev.to?.name === 'bridge1end') s.createKill()
     })
     game.value = new Phaser.Game({
