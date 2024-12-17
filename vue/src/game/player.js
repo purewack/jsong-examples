@@ -199,6 +199,7 @@ export default class PlayerController extends Phaser.Scene {
         this.playerReset()
         this.player.visible = false;
         this.player.active = false; 
+        this.player.body.checkCollision.none = true
         this.time.addEvent({
             delay: duration,
             callback: ()=>{

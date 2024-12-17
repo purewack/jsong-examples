@@ -10,32 +10,83 @@ const phaserRef = ref()
 const health = ref(100)
 const energy = ref(100)
 const killCount = ref(0)
-const killTarget = ref(20)
+const killTarget = ref(35)
 const gamePhase = ref('avoid')
 
 EventBus.addListener('player-hit',()=>{
-    health.value -= 10
+    // if(health.value - 10 <= 0){
+    //     health.value = 0
+    //     EventBus.emit('player-dead')
+    // }
+    // else 
+    //     health.value -= 10
 })
 EventBus.addListener('enemy-hit',()=>{
+
+    if(gamePhase.value === 'shoot'){
+        killCount.value += 1;
+        if(killCount.value >= killTarget.value){
+            const progressTo = jsong.getPosition().section[0] / jsong.getPosition().section[1]
+            if(progressTo <= 0.4) {
+                jsong.continue()
+                console.log("queue pre avoid2 prog")
+            }
+            else jsong.afterSectionPercentage(1-progressTo + 0.01).then(()=>{
+                jsong.continue()
+                console.log("queue post shoot prog")
+            })
+        }
+        return
+    }
+
+    if(gamePhase.value === 'boss') {
+        if(energy.value - 1 <= 0){
+            energy.value = 0
+            EventBus.emit('boss-dead')
+            jsong.continue()
+        }
+        else 
+            energy.value -= 1
+    }
+})
+
+EventBus.addListener('player-fire-bullet',()=>{
+    energy.value -= 1
+})
+EventBus.addListener('player-fire-burst',()=>{
+    energy.value -= 10
 })
 
 EventBus.addListener('player-collect-power',()=>{
-    energy.value += 10
+    if(gamePhase.value === 'avoid')
+        if(energy.value + 15 >= 125 && energy.value < 125 && jsong.current.name === 'avoid')
+            jsong.continue()
+        else if(energy.value +15 >= 200 && jsong.current.name === 'avoid2'){
+            const progressTo = jsong.getPosition().section[0] / jsong.getPosition().section[1]
+            if(progressTo <= 0.4) {
+                jsong.continue()
+                console.log("queue pre avoid2 prog")
+            }
+            else jsong.afterSectionPercentage(1-progressTo + 0.1).then(()=>{
+                jsong.continue()
+                console.log("queue post avoid2 prog")
+            })
+        }
+    energy.value += 8
 })
 
 jsong.addEventListener('queue',(ev: QueueEvent)=>{
     console.log("queue",ev.to, ev.from)
     const timeTo = ev.timeUntil * 1000
-    // if(ev.to?.name === 'bridge1') {
-    //     s.animateDespawn(timeTo/2).then(()=>{
-    //         s.createCapture(timeTo/2)
-    //     })
-    // }
+    if(ev?.to?.name === 'avoid2_end') gamePhase.value = ''
+    if(ev?.to?.name === 'shoot_end') gamePhase.value = ''
+
+    if(ev?.to?.name === 'shoot_end') scene('boss')
+    if(ev?.to?.name === 'avoid2_end') scene('shoot')
+    if(ev.to?.name === 'avoid' && ev.from?.name !== 'idle') scene('avoid')
 })
 jsong.addEventListener('change',(ev: ChangeEvent)=>{
     console.log("change",ev.to, ev.from)
-    // if(ev.to?.name === 'avoid' && ev.from?.name !== 'idle') 
-    // if(ev.to?.name === 'bridge1end') EventBus.emit('change-game-')
 })
 
 const queuedScene = ref('')
@@ -50,31 +101,28 @@ EventBus.on('current-scene-end',()=>{
 EventBus.on('current-scene-ready',(s)=>{
     console.log('ready scene',s)
     gamePhase.value = s.scene.key
+    health.value = 100
+    if(gamePhase.value === 'boss') energy.value = 250
+    if(gamePhase.value === 'avoid') energy.value = 50
+    if(gamePhase.value === 'shoot') energy.value = 150
+    killCount.value = 0;
 })
-
-function next(){
-    if(gamePhase.value === 'avoid')
-        scene('shoot')
-    if(gamePhase.value === 'shoot')
-        scene('boss')
-    if(gamePhase.value === 'boss')
-        scene('avoid')
-}
-
 
 gamePhase.value = 'avoid'
 </script>
 
 <template>
-    <main class="w-full h-full phaser-container bg-red-400">
+    <main class="w-full h-full phaser-container">
         <Phaser ref="phaserRef"/>
         <!-- <div class="vignette"></div> -->
     </main>
     <section class="fixed z-50 top-0 left-0 right-0 flex justify-between">
         <div :style="{'--value':health / 100}" class="bar">Health {{ health }}</div>
         <div v-if="gamePhase === 'avoid'"> Collect 200 energy</div> 
-        <div v-if="gamePhase === 'kill'"> {{ killCount }}/{{killTarget}} </div> 
-        <div :style="{'--value':energy / 200}" class="bar right">energy {{ energy }}</div>
+        <div v-if="gamePhase === 'shoot'"> Shoot Aliens: {{ killCount }}/{{killTarget}} </div> 
+        <div v-if="gamePhase === 'boss'"> Defeat Alien Boss </div> 
+        <div v-if="gamePhase === 'boss'" :style="{'--value':energy / 100}" class="bar right">Boss {{ energy }}</div>
+        <div v-else :style="{'--value':energy / 200}" class="bar right">Energy {{ energy }}</div>
     </section>
     <section class="song-status bg-green-900 fixed z-50 bottom-0 left-0 right-0 flex">
         JSONg:

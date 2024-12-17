@@ -12,8 +12,8 @@ provide('jsong',player)
 
 const router = useRouter()
 onMounted(async ()=>{
-  // loaded.value = false
-  // router.push('/')
+  loaded.value = false
+  router.push('/')
   player.continue([0])
 })
 
@@ -61,7 +61,6 @@ body {
 
 .bg-container {
   position: fixed;
-  overflow: hidden;
   width: 100vw;
   height: 100vh;
   z-index: -10;
@@ -72,8 +71,8 @@ body {
   top:0;
   height: 100%;
   width: 100%;
-  background-size: 200px;
-  /* background-image: url('bg.png'); */
+  background-size: 20vmin;
+  background-image: url('bg.png');
   image-rendering:pixelated;
 
   transform-origin: 100% 0;
@@ -82,7 +81,7 @@ body {
 }
 
 .bg.move {
-  animation-duration: 20s; 
+  animation-duration: 4s; 
   animation-name: move-bg;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -98,7 +97,7 @@ body {
 }
 @keyframes move-bg {
   to {
-    background-position: 0px 2000px;
+    background-position: 0px 20vmin;
   }
 }
 

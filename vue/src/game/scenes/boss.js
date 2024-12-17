@@ -60,6 +60,7 @@ export default class Boss extends PlayerController {
                 duration: 1000,
                 repeat: -1,
                 callback: ()=>{
+                    if(!this.boss.visible) return
                     const enemy = this.boss
                     const r = this.enemyLasers.create(enemy.x, enemy.y,'bullet2')
                     const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.player.x, this.player.y); 
@@ -71,10 +72,11 @@ export default class Boss extends PlayerController {
                 delay: 1000,
                 repeat: -1,
                 callback: ()=>{
+                    if(!this.boss.visible) return
                     const enemy = this.boss
                     const r = this.enemyLasers.create(enemy.x, enemy.y,'bullet1')
                     const angle = Phaser.Math.Angle.Random(); 
-                    this.physics.velocityFromRotation(angle, 50, r.body.velocity)
+                    this.physics.velocityFromRotation(angle, 80, r.body.velocity)
                     r.setAngularVelocity(-70 + Math.random() * 200)
                 }
             })
@@ -85,6 +87,25 @@ export default class Boss extends PlayerController {
                     EventBus.emit('current-scene-end',this)
                 })
                 EventBus.removeListener('end-scene')
+            })
+            EventBus.on('player-dead' ,()=>{
+                this.playerAnimateExplode()
+            })
+            EventBus.on('boss-dead' ,()=>{
+                this.boss.visible = false
+                this.boss.body.checkCollision.none = true
+                this.explosion.visible = true;
+                this.explosion.x = 128
+                this.explosion.y = 128
+                this.explosion.setScale(0,0)
+                this.tweens.add({
+                    targets: this.explosion,
+                    scale: '+=1',
+                    duration: 2000,
+                    ease: 'Sine.inOut',
+                    yoyo: true,
+                }); 
+                this.explosion.anims.play('player-explode');
             })
         })
 
@@ -106,7 +127,8 @@ export default class Boss extends PlayerController {
     playerCollide(player, bullet){
         
     }
-    playerHit(player, bullet){
+    playerHit(_player, bullet){
+        EventBus.emit('player-hit')
         bullet.destroy()
         this.player.active = false
         this.player.setAccelerationX(0)
@@ -117,11 +139,11 @@ export default class Boss extends PlayerController {
                 this.player.active = true
             }
         })
-        EventBus.emit('player-hit')
     }
     enemyHit(enemy, bullet){
         bullet.destroy()
-        EventBus.emit('enemy-hit')
+        if(enemy.visible)
+            EventBus.emit('enemy-hit')
     }
 
     update(){
@@ -135,15 +157,12 @@ export default class Boss extends PlayerController {
             this.fireTimer?.destroy()
         }
         if(this.input.activePointer.buttons && !this.down){
+            if(this.fireTimer?.getRemaining() > 0) return
             this.down = true;
+            this.fireBullet()
             this.fireTimer =  this.time.addEvent({
-                delay: (1000 * 60 / 160),
-                repeat: -1,
-                callback: ()=>{
-                    this.fireBullet()
-                }
+                delay: 200,
             })
-            
         }
 
 

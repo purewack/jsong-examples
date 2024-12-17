@@ -59,7 +59,7 @@ export default class Avoid extends PlayerController {
                 });
             }
 
-            for(let i=2; i<3+2; i++){
+            for(let i=2; i<4+2; i++){
                 this.time.addEvent({
                     delay: 2000 * (i+2),
                     callback: ()=>{
@@ -88,6 +88,9 @@ export default class Avoid extends PlayerController {
                 EventBus.emit('current-scene-end',this)
             })
             EventBus.removeListener('end-scene')
+        })
+        EventBus.on('player-dead' ,()=>{
+            this.playerAnimateExplode()
         })
     }
 
@@ -127,8 +130,9 @@ export default class Avoid extends PlayerController {
         EventBus.emit('player-collect-power')
     }
 
-    playerCollideRock(player, item){
-        EventBus.emit('player-hit')
+    playerCollideRock(_player, item){
+        if(_player.active)
+            EventBus.emit('player-hit')
     }
 
 

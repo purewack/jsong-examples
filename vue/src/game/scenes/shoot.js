@@ -89,6 +89,9 @@ export default class Shoot extends PlayerController{
             })
             EventBus.removeListener('end-scene')
         })
+        EventBus.on('player-dead' ,()=>{
+            this.playerAnimateExplode()
+        })
     }
 
     update(){
@@ -102,18 +105,15 @@ export default class Shoot extends PlayerController{
             this.fireTimer?.destroy()
         }
         if(this.input.activePointer.buttons && !this.down){
+            if(this.fireTimer?.getRemaining() > 0) return
             this.down = true;
+            if(!this.cursors.shift.isDown)
+                this.fireBullet()
+            else
+                this.fireBurst()
             this.fireTimer =  this.time.addEvent({
-                delay: (1000 * 60 / 160),
-                repeat: -1,
-                callback: ()=>{
-                    if(this.cursors.shift.isDown)
-                        this.fireBurst()
-                    else
-                        this.fireBullet()
-                }
+                delay: this.cursors.shift.isDown ? 1000 : 200,
             })
-            
         }
 
 
@@ -155,9 +155,10 @@ export default class Shoot extends PlayerController{
         });
     }
 
-    playerHit(player, bullet){
+    playerHit(_player, bullet){
         bullet.destroy()
-        EventBus.emit('player-hit')
+        if(_player.active)
+            EventBus.emit('player-hit')
     }
     enemyHit(checker, bullet){
         if(checker.texture.key !== 'player'){
@@ -215,7 +216,7 @@ export default class Shoot extends PlayerController{
     fireBullet(){
         const xx = this.input.activePointer.x
         const yy = this.input.activePointer.y
-        const r = this.playerLasers.create(this.player.x, this.player.y,'bullet1')
+        const r = this.playerLasers.create(this.player.x, this.player.y,'bullet0')
         const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, xx, yy); 
         this.physics.velocityFromRotation(angle, 70, r.body.velocity)
         r.setAngularVelocity(-70 + Math.random() * 200)
@@ -227,7 +228,7 @@ export default class Shoot extends PlayerController{
         const xx = this.input.activePointer.x
         const yy = this.input.activePointer.y
         const r = this.playerLasers.createMultiple({
-            key: 'bullet0',
+            key: 'bullet1',
             setXY: { x: this.player.x, y: this.player.y },
             repeat: 6,
         })

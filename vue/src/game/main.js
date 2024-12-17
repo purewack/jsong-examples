@@ -10,12 +10,12 @@ const config = {
     height: 256,
     parent: 'game-container',
     backgroundColor: '#028af8',
-    // transparent: true,
+    transparent: true,
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 0, x:0 },
-            debug: true
+            // debug: true
         }
     },
     scene: [
