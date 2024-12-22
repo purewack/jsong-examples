@@ -41,9 +41,13 @@
         ]    
     },
     "tracks": [
-        {"name":"main", "audioOffsetSeconds":0.05}
+        {"name":"synth", "audioOffsetSeconds":0.05},
+        {"name":"string", "audioOffsetSeconds":0.05},
+        {"name":"perc", "audioOffsetSeconds":0.05}
     ],
     "sources": {
-        "main": "./space.mp3"
+        "synth": "./synth.mp3",
+        "string":"./string.mp3",
+        "perc":"./perc.mp3"     
     }
 }

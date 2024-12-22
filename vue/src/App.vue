@@ -31,7 +31,7 @@ function audioOk(){
   const j = toRaw(jsong.value)
   j.parseManifest('space.jsong').then(m => {
     console.log(m)
-    j.useManifest(m,{click:true}).then(()=>{
+    j.useManifest(m,{click:false}).then(()=>{
       loaded.value = true
       j.play()
       // player.trackVolumeControls['extra'].volume.value = -200
