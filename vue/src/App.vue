@@ -1,28 +1,39 @@
 <script setup>
-import {RouterView, useRouter} from 'vue-router'
+import {RouterView, useRoute, useRouter} from 'vue-router'
 import JSONg from "jsong-audio"
-import { onMounted, provide, ref } from "vue";
-import Phaser from './game/Phaser.vue';
+import { onMounted, provide, ref, toRaw, watch } from "vue";
+
 
 // const loaded = ref(false)
-const loaded = ref(true)
+const loaded = ref(false)
 
-const player = new JSONg()
-provide('jsong',player)
+const jsong = ref(new JSONg(undefined,{debug:true}))
+provide('jsong',toRaw(jsong.value))
 
+const route = useRoute()
 const router = useRouter()
-onMounted(async ()=>{
-  loaded.value = false
-  router.push('/')
-  player.continue([0])
+
+watch(route, (to)=>{
+  console.log("route changed" )
+  const j = toRaw(jsong.value)
+  if(!loaded.value){
+    router.push('/')
+  }
+  else if(to.path === '/'){
+    if(j.state !== 'playing')
+      j.cancel()
+    else
+      j.overrideCurrent([1],2)
+  }
 })
 
 function audioOk(){
-  player.parseManifest('space.jsong').then(m => {
+  const j = toRaw(jsong.value)
+  j.parseManifest('space.jsong').then(m => {
     console.log(m)
-    player.useManifest(m).then(()=>{
+    j.useManifest(m,{click:true}).then(()=>{
       loaded.value = true
-      player.play()
+      j.play()
       // player.trackVolumeControls['extra'].volume.value = -200
     })
   })
@@ -33,7 +44,7 @@ function audioOk(){
   <div class="bg-container">
     <div class="bg move" :class="[loaded && 'move', $route.path === '/game' && 'fast', $route.path === '/about' && 'about']"></div>
   </div>
-  <RouterView  v-if="loaded" />
+  <RouterView v-if="loaded" />
   <main v-else class="flex flex-col gap-4 justify-center items-center h-screen text-center bg">
     <i>This game requires audio to play</i> <br/>
     Click the button to allow audio <br/>
@@ -54,7 +65,7 @@ body {
   background-color: black;
  
 
-  font-family: "Press Start 2P", system-ui;
+  font-family: "Press Start 2P", monospace;
   font-weight: 400;
   font-style: normal;
 }
@@ -71,7 +82,7 @@ body {
   top:0;
   height: 100%;
   width: 100%;
-  background-size: 20vmin;
+  background-size: 400px 400px;
   background-image: url('bg.png');
   image-rendering:pixelated;
 
@@ -83,12 +94,13 @@ body {
 .bg.move {
   animation-duration: 4s; 
   animation-name: move-bg;
+  animation-fill-mode: both;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
 
 .bg.fast{
-  animation-duration: 10s; 
+  animation-duration: 4s; 
   scale: 1 2;
 }
 .bg.about{
@@ -97,7 +109,7 @@ body {
 }
 @keyframes move-bg {
   to {
-    background-position: 0px 20vmin;
+    background-position: 0px 400px;
   }
 }
 

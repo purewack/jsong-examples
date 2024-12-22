@@ -28,9 +28,9 @@ export default class Shoot extends PlayerController{
         this.enemyLasers = this.physics.add.group()
         this.playerLasers = this.physics.add.group()
 
+        this.physics.add.collider(this.player, this.enemies);
+
         this.physics.add.overlap(this.player, this.powers, this.collectPower, null, this);
-        this.physics.add.collider(this.player, this.enemies, this.enemyHit);
-        
         this.physics.add.overlap(this.player, this.enemyLasers, this.playerHit, null, this);
         this.physics.add.overlap(this.playerLasers, this.enemies, this.enemyHit, null, this);
         
@@ -100,19 +100,19 @@ export default class Shoot extends PlayerController{
         if(this.player.active)
             this.playerMovement() 
         
-        if(!this.input.activePointer.buttons ){
+        if(!this.cursors.space.isDown){
             this.down = false;
             this.fireTimer?.destroy()
         }
-        if(this.input.activePointer.buttons && !this.down){
+        if(this.cursors.space.isDown && !this.down){
             if(this.fireTimer?.getRemaining() > 0) return
             this.down = true;
-            if(!this.cursors.shift.isDown)
-                this.fireBullet()
-            else
+            // if(!this.cursors.shift.isDown)
+            //     this.fireBullet()
+            // else
                 this.fireBurst()
             this.fireTimer =  this.time.addEvent({
-                delay: this.cursors.shift.isDown ? 1000 : 200,
+                delay: 1000,
             })
         }
 
@@ -160,12 +160,21 @@ export default class Shoot extends PlayerController{
         if(_player.active)
             EventBus.emit('player-hit')
     }
-    enemyHit(checker, bullet){
-        if(checker.texture.key !== 'player'){
-            bullet.destroy()
-            checker.destroy()
-            this.randomEnemy()
-        }
+    enemyHit(bullet, enemy){
+        bullet.destroy()
+        this.tweens.add({
+            targets: enemy,
+            scale: '-=1',
+            duration: 500,
+        })
+        this.time.addEvent({
+            delay: 510,
+            callback: ()=>{
+                enemy.destroy()
+                this.randomEnemy()
+            }
+        })
+        
         EventBus.emit('enemy-hit')
     }
 

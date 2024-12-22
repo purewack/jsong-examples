@@ -13,10 +13,11 @@
         "meter": [4,4],
         "grain": 16,
         "map": {
-            "idle": [0,4],
+            "idle_start": [0,1],
+            "idle": [1,2],
             "countdown": [4,8],
             "countdown_short": [5,6],
-            "countdown_end": [8,12],
+            "countdown_end": [4,12],
             "avoid":[12,16],
             "avoid2": [16,20],
             "avoid2_end": [20,24],
@@ -26,23 +27,27 @@
             "boss": [32,36]
         },
         "flow":[
-            "idle-X",
+            "idle_start->",
+            "idle",
             [
                 "avoid",
-                {"name": "avoid2-X","fade":0.2},
+                {"name":"avoid2-|-@","grain":8},
                 "avoid2_end->",
-                "shoot-X",
+                {"name":"shoot","legato":true,"grain":8,"sync":true},
                 "shoot_end->",
-                "boss"
+                "boss",
+                 {"name":"countdown_end->","grain":0}
             ]
         ]    
     },
     "tracks": [
-        {"name":"body", "audioOffsetSeconds":0.05},
-        {"name":"extra", "audioOffsetSeconds":0.05}
+        {"name":"synth", "audioOffsetSeconds":0.05},
+        {"name":"string", "audioOffsetSeconds":0.05},
+        {"name":"perc", "audioOffsetSeconds":0.05}
     ],
     "sources": {
-        "body": "./body.mp3",
-        "extra":"./extra.mp3"    
+        "synth": "./synth.mp3",
+        "string":"./string.mp3",
+        "perc":"./perc.mp3"     
     }
 }

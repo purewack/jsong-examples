@@ -113,8 +113,10 @@ export default class Boss extends PlayerController {
     }
 
     fireBullet(){
-        const xx = this.input.activePointer.x
-        const yy = this.input.activePointer.y
+        // const xx = this.input.activePointer.x
+        // const yy = this.input.activePointer.y
+        const xx = 128
+        const yy = 128
         const r = this.playerLasers.create(this.player.x, this.player.y,'bullet0')
         const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, xx, yy); 
         this.physics.velocityFromRotation(angle, 70, r.body.velocity)
@@ -152,11 +154,11 @@ export default class Boss extends PlayerController {
         if(this.player.active)
             this.playerMovement() 
         
-        if(!this.input.activePointer.buttons ){
+        if(!this.cursors.space.isDown ){
             this.down = false;
             this.fireTimer?.destroy()
         }
-        if(this.input.activePointer.buttons && !this.down){
+        if(this.cursors.space.isDown && !this.down){
             if(this.fireTimer?.getRemaining() > 0) return
             this.down = true;
             this.fireBullet()

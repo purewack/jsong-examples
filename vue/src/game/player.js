@@ -184,6 +184,7 @@ export default class PlayerController extends Phaser.Scene {
 
     playerAnimateExplode(duration = 2000){ 
         return new Promise((res)=>{
+        
         this.explosion.visible = true;
         this.explosion.x = this.player.x
         this.explosion.y = this.player.y
@@ -195,7 +196,7 @@ export default class PlayerController extends Phaser.Scene {
             ease: 'Sine.inOut',
             yoyo: true,
         }); 
-        this.explosion.anims.play('player-explode');
+        this.player.anims.play('player-explode');
         this.playerReset()
         this.player.visible = false;
         this.player.active = false; 
@@ -206,6 +207,7 @@ export default class PlayerController extends Phaser.Scene {
                 res(true)
             }
         })
+        
         })
     }
 
