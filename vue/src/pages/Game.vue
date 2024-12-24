@@ -155,6 +155,7 @@ EventBus.addListener('player-collect-power',()=>{
         jsong.continue()
     else if(energy.value +15 >= 200 && jsong.current.name === 'avoid2'){
         const progressTo = jsong.getPosition().section[0] / jsong.getPosition().section[1]
+        jsong.cancel()
         if(progressTo <= 0.5) {
             jsong.overrideCurrent([2,2],0.3)
             console.log("queue pre avoid2 prog")
@@ -226,11 +227,14 @@ Countdown:
                 Infinite Health: {{ noDamage ? '[X]' : '[ ]'}}
             </button>
             <h1 class="text-green-300 text-sm my-4">Phase: {{ gamePhase }}</h1>
-            <p v-if="gamePhase === 'avoid' && jsong.current.name === 'avoid'" >
+            <p v-if="jsong.current.name === 'countdown_end'" >
+                Waiting for next game to begin...
+            </p>
+            <p v-else-if="gamePhase === 'avoid' && jsong.current.name === 'avoid'" >
                 When you collect 100+ energy, music will change.</br>
                 Use the arrow keys to move.
             </p>
-            <p v-else-if="gamePhase === 'avoid'">
+            <p v-else-if="gamePhase === 'avoid' && jsong.current.name === 'avoid2'" >
                 You now need to collect the full 200 energy to progress.
                 <br/>
                 <br/>

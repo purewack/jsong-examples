@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 export default class PlayerController extends Phaser.Scene {
     cursors;
+    wasd;
     player;
     portal;    
     explosion;
@@ -23,6 +24,7 @@ export default class PlayerController extends Phaser.Scene {
     create(){ 
         this.input.mouse.disableContextMenu();
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.wasd = this.input.keyboard.addKeys({ up: 'W', left: 'A', down: 'S', right: 'D' });
         
         this.portal = this.physics.add.sprite(128,-128,'wormhole')
         this.portal.visible = false;
@@ -56,19 +58,19 @@ export default class PlayerController extends Phaser.Scene {
     }
 
     playerMovement(){
-        if(this.cursors.up.isDown){ 
+        if(this.cursors.up.isDown || this.wasd.up.isDown){ 
             this.player.setAccelerationY(-100);
         }
-        else if(this.cursors.down.isDown){ 
+        else if(this.cursors.down.isDown  || this.wasd.down.isDown){ 
             this.player.setAccelerationY(100);
         }
         else 
         this.player.setAccelerationY(0);
 
-        if(this.cursors.left.isDown){ 
+        if(this.cursors.left.isDown  || this.wasd.left.isDown){ 
             this.player.setAccelerationX(-100);
         }
-        else if(this.cursors.right.isDown){ 
+        else if(this.cursors.right.isDown  || this.wasd.right.isDown){ 
             this.player.setAccelerationX(100);
         }
         else 

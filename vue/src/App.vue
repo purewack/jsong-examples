@@ -103,7 +103,7 @@ body {
 
 .bg.fast{
   animation-duration: 4s; 
-  scale: 1 2;
+  scale: 1 2.5;
 }
 .bg.about{
   animation-duration: 8s; 
