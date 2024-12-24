@@ -3,6 +3,8 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { EventBus } from './events';
 import StartGame from './main';
 
+const props = defineProps({width: Number, height: Number})
+
 // Save the current scene instance
 const scene = ref();
 const game = ref();
@@ -34,13 +36,21 @@ defineExpose({ scene, game });
 </script>
 
 <template>
-    <div id="game-container" ></div>
+    <div id="game-container" :style="{'--ww':width, '--hh':height}"></div>
 </template>
 
 <style>
-#game-container > canvas{
-  width: 100vmin;
-  height: 100vmin;
-  image-rendering: pixelated;
+#game-container { 
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: calc(min(var(--ww),var(--hh)) * 1px);
+    width: calc(min(var(--ww),var(--hh)) * 1px);
+}
+#game-container > canvas{ 
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
 }
 </style>

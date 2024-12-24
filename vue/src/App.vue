@@ -2,6 +2,7 @@
 import {RouterView, useRoute, useRouter} from 'vue-router'
 import JSONg from "jsong-audio"
 import { onMounted, provide, ref, toRaw, watch } from "vue";
+import Game from './pages/Game.vue';
 
 
 // const loaded = ref(false)
@@ -50,6 +51,7 @@ function audioOk(){
     Click the button to allow audio <br/>
     <button @click="audioOk" class="bg-blue-900 text-blue-200 w-max p-4">OK !</button>
   </main>
+  <!-- <Game/> -->
 </template>
 
 <style>
@@ -113,6 +115,11 @@ body {
   }
 }
 
+.font-main{
+  font-family: "Press Start 2P", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
 
 .font-dot{
   font-family: "Doto", sans-serif;
