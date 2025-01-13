@@ -17,11 +17,8 @@ function beginGame(){
 
   const [currentBeat, totalBeats] = player.getPosition().section
   fadeTime.value =  player.timingInfo.beatDuration * totalBeats - currentBeat
-  player.continue([2,0]).then(()=>{
-    router.push('/game')
-  })
+  router.push('/game')
 }
-
 
 </script>
 

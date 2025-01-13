@@ -21,10 +21,13 @@ watch(route, (to)=>{
     router.push('/')
   }
   else if(to.path === '/'){
-    if(j.state !== 'playing')
+    if(j.state != 'playing')
       j.cancel()
-    else
-      j.overrideCurrent([1],2)
+    j.overrideCurrent([1],2)
+  }
+  else if(to.path === '/game'){
+    j.cancel()
+    j.continue([2,0])
   }
 })
 
