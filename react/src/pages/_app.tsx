@@ -1,60 +1,58 @@
 import PlayerNav from '@/components/PlayerNav'
 import '@/styles/globals.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 import type { AppProps } from 'next/app'
 import { Dispatch, MutableRefObject, SetStateAction, createContext, use, useEffect, useReducer, useRef, useState } from 'react'
-import JSONg from 'jsong-audio/src';
+import JSONg from 'jsong-audio';
 import { usePathname } from 'next/navigation';
-
+import { StateEvent } from 'jsong-audio/dist/types/events';
 export const PlayerContext = createContext<JSONg | null>(null)
 
 export default function App({ Component, pageProps }: AppProps) {
   
   const [player, setPlayer] = useState<JSONg | null>(null)
   const [pending, setPending] = useState(false);
-  const [ready, setReady] = useState(false);
 
   useEffect(()=>{
-    const player = new JSONg()
-    player.addEventListener('state',(ev)=>{
-      console.log("STATE", ev.stateNow)
-    })
-    setPlayer(player)
-  },[])
+    if(player) return 
 
-  useEffect(()=>{
-    if(!player) return 
-    setReady(true);
+    const _player = new JSONg()
+    _player.output.volume.value = -6
+    setPlayer(_player)
+    
+    
     const willstart = ()=>{
       setPending(true);
     }
-    const didstart = (e: CustomEvent)=>{
+    const didstart = ()=>{
       setPending(false);
-      console.log('start',e.detail.index)
     }
     const cancelstart = ()=>{
       setPending(false);
     }
-    // player.addEventListener('onSectionWillStart', willstart);
-    // player.addEventListener('onSectionDidStart', didstart);
-    // player.addEventListener('onSectionCancelChange', cancelstart);
 
+    _player.addEventListener('queue', willstart);
+    _player.addEventListener('change', didstart);
+    _player.addEventListener('cancel', cancelstart);
+
+    _player.addEventListener('state', (ev)=>{
+      console.log("[jsong-state]",ev.stateOld,"->",ev.stateNow)
+    })
     return ()=>{
-      // player.removeEventListener('onSectionWillStart', willstart);
-      // player.removeEventListener('onSectionDidStart', didstart);
-      // player.removeEventListener('onSectionCancelChange', cancelstart);
-      player.stop(false)
+      _player.removeEventListener('queue', willstart);
+      _player.removeEventListener('change', didstart);
+      _player.removeEventListener('cancel', cancelstart);
+      _player.stop(false)
       setPlayer(null);
     }
-  },[player])
+  },[])
 
   const path = usePathname();
 
-  const [introDone, setIntroDone] = useState(false)
-
-  return ready && player && <>
-    <PlayerContext.Provider value={player}>
+  return player && <>
+      <PlayerContext.Provider value={player}>
       <PlayerNav show={path !== '/'} pending={pending}/>
-      <Component {...pageProps} introDone={introDone} setIntroDone={setIntroDone}/>
-    </PlayerContext.Provider>
+      <Component {...pageProps} />
+      </PlayerContext.Provider>
   </>
 }

@@ -4,61 +4,62 @@ import style from '@/styles/nav.module.css'
 import clsx from "clsx";
 import { PlayerContext } from "@/pages/_app";
 import JSONg from "jsong-audio";
+import { ChangeEvent, StateEvent, TransportEvent } from "jsong-audio/dist/types/events";
 
 export default function PlayerNav({show=true, pending=false}){
 
     const player = useContext(PlayerContext) as JSONg;
-    const [playerState, setPlayerState] = useState(null)
+    const [playerState, setPlayerState] = useState('')
     const [loopProgress, setLoopProgress] = useState([0,0]);
     const isPlaying = playerState === 'playing';
     const [isMute, setIsMute] = useState(false);
     const [nowPlaying, setNowPlaying] = useState('')
     
     useEffect(()=>{
-        const onstate = (e: CustomEvent)=>{
-            setPlayerState(e.detail)
+        const onstate = (e: StateEvent)=>{
+            setPlayerState(e.stateNow || '')
         } 
-        const ontransport = (e: CustomEvent)=>{
-            const {position, loopBeatPosition} = e.detail
-            if(loopBeatPosition){
-                setLoopProgress(loopBeatPosition);
-            }
+        const ontransport = (e: TransportEvent)=>{
+            // console.log(e.progress)
+            player.audioSafeCallback(()=>{
+            setLoopProgress(e.progress);
+            })   
         }
-        const onsectionstart = ()=>{
-            setNowPlaying(player?.playingNow?.name)
+        const onsectionstart = (e: ChangeEvent)=>{
+            setNowPlaying(e.to?.name || '')
         }
-        player.addEventListener('onTransport', ontransport)
-        player.addEventListener('onStateChange',onstate)
-        player.addEventListener('onSectionDidStart', onsectionstart)
+        player.addEventListener('transport', ontransport)
+        player.addEventListener('state',onstate)
+        player.addEventListener('change', onsectionstart)
 
         return ()=>{
-            player.removeEventListener('onTransport', ontransport)
-            player.removeEventListener('onStateChange',onstate)
-            player.removeEventListener('onSectionDidStart', onsectionstart)
+            player.removeEventListener('transport', ontransport)
+            player.removeEventListener('state',onstate)
+            player.removeEventListener('change', onsectionstart)
         }
     },[])
 
 
     const nodeRef = useRef(null);
-    return <nav ref={nodeRef} className={clsx(style.nav, true && style.show, pending && style.pending)}>
-        <h2 className={style.title}>JSONg</h2>
+    return <nav ref={nodeRef} className={clsx('capitalize select-none',style.nav, true && style.show, pending && style.pending)}>
+        <h2 className={clsx(style.title)}>JSONg</h2>
         <div>
-        <span className={style.progress} style={{
-            '--progress': isPlaying ? (1+loopProgress[0]) / loopProgress[1] : 0
+        <span className={clsx(style.progress,'after:bg-green-300 opacity-40')} style={{
+            '--progress': isPlaying ? (loopProgress[0]) / loopProgress[1] : 0
         } as CSSProperties}>
             {isPlaying ? 
-                <>{nowPlaying} : {loopProgress[0] + 1} / {loopProgress[1]}</>
+                <>{nowPlaying} : {loopProgress[0]} / {loopProgress[1]}</>
             : playerState }
         </span>
      
-        <button onClick={()=>{player.stop()}}>Stop</button>
-        <span className={clsx('material-symbols-outlined', style.vol)} onClick={()=>{
+        {/* <button onClick={()=>{player.stop()}}>Stop</button> */}
+        <span className={clsx('material-symbols-outlined w-16 text-right', style.vol)} onClick={()=>{
             setIsMute(m => {
-                if(!m) player.muteAll()
-                else player.unMuteAll()
+                if(!m) player.mute()
+                else player.unmute()
                 return !m;
             })
-        }}>{isPlaying && !isMute ? 'volume_up' : 'volume_off'}</span>
+        }}>{!isMute ? 'volume_up' : 'volume_off'}</span>
         </div>
     </nav>
 }
