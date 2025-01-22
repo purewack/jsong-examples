@@ -2,7 +2,7 @@
   "type": "jsong",
   "version": "J/1",
   "meta": {
-    "title": "Test Song 2",
+    "title": "Auto Song Test",
     "author": "Damian Nowacki",
     "createdOn" : "20231108",
     "timestamp" : "",
@@ -23,11 +23,11 @@
       "chorus" : [7, 11]
     },
     "flow": [
-      "intro", 
-      "intro2", 
-      "verse", 
-      "bridge",
-      "chorus" 
+      "intro->", 
+      [2,"intro2->"], 
+      [2,"verse->"], 
+      "bridge->",
+      [4,"chorus->"] 
     ]
   },
   "tracks": [
