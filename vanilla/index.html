@@ -1,14 +1,209 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>JSONg Player</title>
+    <title>JSONg Compact-Streamer</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css">
   </head>
 
   <body>
-    <h1>JSONg</h1>
-    <button id="btn-main">Test</button>
-    <script type="module" src="./index.js"></script>
+    <div style="width:100%;">
+      <h1 class="heading">JSONg Compact-Streamer</h1>
+      
+      <div class="content">
+        <section class="text">
+        <p>JSONg audio can be used to save space while also streaming high quality audio.</p>
+        <p>This is achieved by preparing a single stereo track and removing any repeating blocks which could be represented as loops within the .jsong file.</p>
+        <p>As an example, we have a song playing that is ~600KB big and another ~700KB for the .jsong</p>
+        <p>If the song was originally 4 minutes long, that could be +9MB for .mp3 and +40MB for .wav !</p>
+        <p>With a simple .jsong structure, this is reduced tenfold</p>
+        <p>There are limitations, the main one being that the music must be designed to be looped, and preferably contain no lyrics / vocals, however for simple demonstrations and space savings JSONg is very much suitable.</p>
+        </section>
+        
+        <section class="controls-container">
+          <button id="btn-play" class="controls">Play</button>
+          <button id="btn-stop" class="controls">Stop</button>
+        </section>
+      </div>
+
+      <section class="playback">
+        <div class="prog"><h2 class="prog-title">Intro</h2>  <span id="prog-intro"  class="prog-bar"></span></div>
+        <div class="prog"><h2 class="prog-title">Verse 1</h2><span id="prog-verse1" class="prog-bar"></span></div>
+        <div class="prog"><h2 class="prog-title">Verse 2</h2><span id="prog-verse2" class="prog-bar"></span></div>
+        <div class="prog"><h2 class="prog-title">Bridge</h2> <span id="prog-bridge" class="prog-bar"></span></div>
+        <div class="prog"><h2 class="prog-title">Chorus</h2> <span id="prog-chorus" class="prog-bar"></span></div>
+      </section>
+    </div>
   </body>
+
+  <script type="module">
+    import JSONg from 'jsong-audio'
+
+    let player = new JSONg()
+    let isLoaded = false
+
+    const elements = document.querySelectorAll(".prog-bar")
+    console.log(elements)
+
+    async function init(){
+      console.log("running test")
+      player.addEventListener('change', (ev)=>{
+        elements.forEach(e => {
+          e.classList.remove('active')
+          if(e.id.endsWith(ev.to.name)){
+            e.classList.add('active')
+          }
+        })
+      })
+      player.addEventListener('transport', (ev)=>{
+        elements.forEach(e => {
+          if(e.classList.contains('active')){
+            e.style.setProperty('--value',(ev.progress[0]/ev.progress[1]))
+          }
+          else{
+            e.style.setProperty('--value',0)
+          }
+        })
+      })
+
+      player.addEventListener('repeat', (ev)=>{
+        console.log(ev)
+      })
+      player.addEventListener('loop', (ev)=>{
+        console.log(ev)
+      })
+
+      const manifest = await player.parseManifest('manifest.jsong')
+      if(manifest){
+        await player.useManifest(manifest)
+        console.log("ok")
+        console.log(player)
+        isLoaded = true
+      }
+    }
+
+    const btnPlay = document.querySelector('#btn-play')
+    btnPlay.addEventListener('click',async ()=>{
+      if(!isLoaded) await init()
+      player.play()
+    })
+
+    const btnStop = document.querySelector('#btn-stop')
+    btnStop.addEventListener('click',()=>{
+      player.stop(false)
+    })
+  </script>
+
+  <style>
+    *{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body{
+      background-color: rgb(242, 248, 252);
+      color: rgb(10, 3, 3);
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+    }
+
+    .heading{
+      padding-block: 2rem;
+      text-align: center;
+      font-weight: 100;
+      font-size: min(max(2rem,8vw),5rem);
+    }
+
+    .text {
+      max-width: 70ch;
+      line-height: 1.5;
+      color: rgb(41, 50, 54);
+    }
+
+    .controls  {
+      width:6rem;
+      height: 3rem;
+      border-radius: 0.5rem;
+      color: rgb(113, 165, 124);
+      border: solid 3px;
+      background-color: transparent;
+      transition: border-radius 0.4s;
+    }
+
+    .controls:hover{
+      border-radius: 2rem;
+    }
+
+    .controls-container{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+
+    .content{
+      margin-inline: auto;
+      max-width: 90ch;
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-around;
+    }
+
+    .playback{
+      max-width: 80ch;
+      margin-inline: auto;
+      margin-block: 2rem;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      place-items: center;
+      justify-items: stretch;
+      gap:4px;
+      user-select: none;
+    }
+    .prog {
+      padding: 1rem;
+      text-align: center;
+      border-radius: 0.5rem;
+      color: rgb(98, 122, 180);
+      border: solid 3px;
+      background-color: transparent;
+      transition: border-radius 0.4s;
+      position: relative;
+    }
+    .prog-bar::after{
+      position: absolute;
+      left:0;
+      bottom:0;
+      content: '';
+      border-radius: 0.25rem;
+      background-color: currentColor;
+      display: block;
+      height: 1rem;
+      width: 100%;
+      scale: var(--value) 1;
+      transition: scale 0.2s;
+    }
+
+    .prog:has(.active) {
+      color: rgb(135, 84, 194);
+    }
+
+    @media only screen and (max-width: 750px) {
+      .controls-container{
+        flex-direction: row;
+        padding: 1rem;
+      }
+      .content{
+        margin-inline: auto;
+        max-width: 60vw;
+        flex-direction: column-reverse;
+      }
+      .playback{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
 </html>
