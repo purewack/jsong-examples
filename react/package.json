@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev_link": "npm link ../../jsong-audio",
-    "dev": "npm run dev_link && next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,13 +12,13 @@
   "dependencies": {
     "bootstrap-icons": "^1.11.3",
     "clsx": "^2.0.0",
+    "jsong-audio": "^1.0.1",
     "lodash": "^4.17.21",
     "next": "14.0.2",
     "react": "^18",
     "react-dom": "^18",
     "react-intersection-observer": "^9.5.3",
-    "react-transition-group": "^4.4.5",
-    "tone": "^15.0.4"
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.14",

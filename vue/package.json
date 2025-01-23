@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm link ../../jsong-audio && vite",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@vueuse/components": "^12.2.0",
     "@vueuse/core": "^12.0.0",
+    "jsong-audio": "^1.0.1",
     "phaser": "^3.87.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
