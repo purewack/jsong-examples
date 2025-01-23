@@ -36,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
     _player.addEventListener('cancel', cancelstart);
 
     _player.addEventListener('state', (ev)=>{
-      console.log("[jsong-state]",ev.stateOld,"->",ev.stateNow)
+      console.info("[jsong-state]",ev.stateOld,"->",ev.stateNow)
     })
     return ()=>{
       _player.removeEventListener('queue', willstart);

@@ -199,8 +199,6 @@ export function Slide4({timing, ready, onNext}: {timing: TimingInfo, ready:boole
     const bVol = Math.min(0,60 - ((1+f)* 60));
     const aVol = Math.min(0,60 - ((1-f)* 60));
 
-    console.log(f)
-
     player.trackVolumeControls['bass'].volume.linearRampTo(aVol,0.05)
     player.trackVolumeControls['melody'].volume.linearRampTo(bVol,0.05)
   }
