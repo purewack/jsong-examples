@@ -1,6 +1,6 @@
 import Head from "next/head"
 import { useRouter } from "next/router";
-import React, { ElementType, JSXElementConstructor, ReactElement, useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import clsx from "clsx";
 import _ from "lodash"
 

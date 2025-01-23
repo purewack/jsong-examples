@@ -1,7 +1,6 @@
-import { Dispatch, ReactNode, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
+import {  ReactNode, useContext} from 'react'
 
 import Head from 'next/head';
-import Link from 'next/link';
 import { PlayerContext } from './_app';
 import JSONg from 'jsong-audio';
 import clsx from 'clsx';

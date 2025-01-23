@@ -88,7 +88,7 @@ body {
   height: 100%;
   width: 100%;
   background-size: 400px 400px;
-  background-image: url('bg.png');
+  background-image: url('/bg.png');
   image-rendering:pixelated;
 
   transform-origin: 100% 0;

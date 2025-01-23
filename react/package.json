@@ -2,6 +2,7 @@
   "name": "react",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/react/",
   "scripts": {
     "dev_link": "npm link ../../jsong-audio",
     "dev": "next dev",

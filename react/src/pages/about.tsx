@@ -1,15 +1,13 @@
 import Head from "next/head"
 import { useRouter } from "next/router";
-import React, { ElementType, JSXElementConstructor, ReactElement, useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import clsx from "clsx";
 import _ from 'lodash'
 
 import { PlayerContext } from "./_app"
-import Scroller from "@/components/Scroller";
 
 import { ChangeEvent, QueueEvent, TransportEvent } from "jsong-audio/dist/types/events";
 import JSONg from "jsong-audio";
-import { json } from "stream/consumers";
 
 type TimingInfo = {tick:number, sBeat: number}
 
@@ -77,7 +75,7 @@ export default function AboutPage(){
           <br/><br/>
           The .jsong file can also contain music encoded as data URI to allow a standalone, single file approach.
           <br/><br/>
-          JSONg is modelled after <a className="underline transition-colors hover:text-green-400" href="https://www.ableton.com/en/">Ableton Live's</a> playback handling abilities.
+          JSONg is modelled after <a className="underline transition-colors hover:text-green-400" href="https://www.ableton.com/en/">Ableton Live&apos;s</a> playback handling abilities.
         </p>
 
         <h2 className="py-8 text-4xl font-thin underline">Example definition:</h2>
@@ -94,7 +92,7 @@ export default function AboutPage(){
             <p className="p-4 text-right">
               Each section has a start bar number and an end bar number
               <br/>
-              In this example <code>"into"</code> starts at bar 0 and end at bar 1, giving a 1 bar section.
+              In this example <code>&quot;into&quot;</code> starts at bar 0 and end at bar 1, giving a 1 bar section.
             </p>
 
             <section className="flex flex-col gap-2 items-end">
