@@ -33,7 +33,7 @@ watch(route, (to)=>{
 
 function audioOk(){
   const j = toRaw(jsong.value)
-  j.parseManifest('space.jsong').then(m => {
+  j.parseManifest(window.location.href + '/space.jsong').then(m => {
     console.log(m)
     j.useManifest(m,{click:false}).then(()=>{
       loaded.value = true

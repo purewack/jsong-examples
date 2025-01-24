@@ -72,7 +72,7 @@
         console.log(ev)
       })
 
-      const manifest = await player.parseManifest('jsong-examples/vanilla/gh_page/manifest.jsong')
+      const manifest = await player.parseManifest(window.location.href + 'manifest.jsong')
       if(manifest){
         await player.useManifest(manifest)
         console.log("ok")

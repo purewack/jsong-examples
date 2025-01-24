@@ -14,7 +14,7 @@ export default function Home() {
   const StartButton = ({children, href} : {children : ReactNode, href:string})=>
   <button
   onClick={async ()=>{
-    const m = await player.parseManifest('aboutit.jsong')
+    const m = await player.parseManifest(window.location.href + '/aboutit.jsong')
     if(m)
     await player.useManifest(m)
     route.push(href)
