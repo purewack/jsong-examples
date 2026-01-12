@@ -26,11 +26,16 @@
       </div>
 
       <section class="playback">
-        <div class="prog"><h2 class="prog-title">Intro</h2>  <span id="prog-intro"  class="prog-bar"></span></div>
-        <div class="prog"><h2 class="prog-title">Verse 1</h2><span id="prog-verse1" class="prog-bar"></span></div>
-        <div class="prog"><h2 class="prog-title">Verse 2</h2><span id="prog-verse2" class="prog-bar"></span></div>
-        <div class="prog"><h2 class="prog-title">Bridge</h2> <span id="prog-bridge" class="prog-bar"></span></div>
-        <div class="prog"><h2 class="prog-title">Chorus</h2> <span id="prog-chorus" class="prog-bar"></span></div>
+        <div class="prog" data-name="intro"><h2 class="prog-title">Intro</h2>  <span id="prog-intro"  class="prog-bar"></span>
+        <div class="counters"><span class="counter-done">0</span> / <span class="counter-total">-</span></div></div>
+        <div class="prog" data-name="verse1"><h2 class="prog-title">Verse 1</h2><span id="prog-verse1" class="prog-bar"></span>
+        <div class="counters"><span class="counter-done">0</span> / <span class="counter-total">-</span></div></div>
+        <div class="prog" data-name="verse2"><h2 class="prog-title">Verse 2</h2><span id="prog-verse2" class="prog-bar"></span>
+        <div class="counters"><span class="counter-done">0</span> / <span class="counter-total">-</span></div></div>
+        <div class="prog" data-name="bridge"><h2 class="prog-title">Bridge</h2> <span id="prog-bridge" class="prog-bar"></span>
+        <div class="counters"><span class="counter-done">0</span> / <span class="counter-total">-</span></div></div>
+        <div class="prog" data-name="chorus"><h2 class="prog-title">Chorus</h2> <span id="prog-chorus" class="prog-bar"></span>
+        <div class="counters"><span class="counter-done">0</span> / <span class="counter-total">-</span></div></div>
       </section>
     </div>
   </body>
@@ -40,20 +45,49 @@
 
     let player = new JSONg()
     let isLoaded = false
+    let manifest = null
+    const counters = {}
 
     const elements = document.querySelectorAll(".prog-bar")
     console.log(elements)
 
+    function updateCounterDOM(name){
+      const prog = document.querySelector(`.prog[data-name="${name}"]`)
+      if(!prog || !counters[name]) return
+      prog.querySelector('.counter-done').textContent = counters[name].done
+      prog.querySelector('.counter-total').textContent = counters[name].total || '-'
+    }
+
+    // Reset counters (set done count to 0 for all known sections)
+    function resetCounters(){
+      Object.keys(counters).forEach(name => {
+        counters[name].done = 0
+        updateCounterDOM(name)
+      })
+    }
+
     async function init(){
       console.log("running test")
+      let currentSection = null
+      function normalizeName(n){ return (n||'').replace(/->$/,'') }
+
       player.addEventListener('change', (ev)=>{
         elements.forEach(e => {
           e.classList.remove('active')
-          if(e.id.endsWith(ev.to.name)){
+          const name = normalizeName(ev.to?.name)
+          if(e.id.endsWith(name)){
             e.classList.add('active')
           }
         })
+        currentSection = normalizeName(ev.to?.name)
+        // increment count each time a section starts
+        if(currentSection){
+          counters[currentSection] = counters[currentSection] || {done:0,total:0}
+          counters[currentSection].done = (counters[currentSection].done||0) + 1
+          updateCounterDOM(currentSection)
+        }
       })
+
       player.addEventListener('transport', (ev)=>{
         elements.forEach(e => {
           if(e.classList.contains('active')){
@@ -66,24 +100,48 @@
       })
 
       player.addEventListener('repeat', (ev)=>{
-        console.log(ev)
+        // debug: inspect repeat payload
+        console.log('repeat event', ev, 'group:', ev.group, 'counter:', ev.counter, 'currentSection:', currentSection)
       })
       player.addEventListener('loop', (ev)=>{
-        console.log(ev)
+        // debug: inspect loop payload
+        console.log('loop event', ev, 'group:', ev.group, 'currentSection:', currentSection)
       })
 
-      const manifest = await player.parseManifest('manifest.jsong')
-      if(manifest){
-        await player.useManifest(manifest)
+      let path = ''
+      try{
+        if(module?.hot){
+          path = 'manifest.jsong'
+        }
+      }
+      catch(e){
+        path = 'vanilla/manifest.jsong'
+      }
+      const jmanifest = await player.parseManifest(path)
+      if(jmanifest){
+        await player.useManifest(jmanifest)
         console.log("ok")
         console.log(player)
         isLoaded = true
+        manifest = jmanifest.manifest
+
+        counters['intro'] = {done:0,total: 4}
+        counters['verse1'] = {done:0,total: 2}
+        counters['verse2'] = {done:0,total: 4}
+        counters['bridge'] = {done:0,total: 2}
+        counters['chorus'] = {done:0,total: 4}
+        
       }
+
     }
 
     const btnPlay = document.querySelector('#btn-play')
     btnPlay.addEventListener('click',async ()=>{
       if(!isLoaded) await init()
+
+      // reset counters each time playback starts
+      resetCounters()
+      console.log(counters)
       player.play()
     })
 
@@ -187,6 +245,23 @@
 
     .prog:has(.active) {
       color: rgb(135, 84, 194);
+    }
+
+    .counters{
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: rgb(41,50,54);
+      display:flex;
+      gap:0.5rem;
+      justify-content:center;
+      align-items:center;
+    }
+    .counter-done{
+      font-weight:700;
+      color: rgb(34,139,34);
+    }
+    .counter-total{
+      color: rgb(97,97,97);
     }
 
     @media only screen and (max-width: 750px) {

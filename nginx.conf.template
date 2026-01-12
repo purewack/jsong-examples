@@ -1,0 +1,32 @@
+server {
+  listen {{PORT}};
+  server_name _;
+  root /usr/share/nginx/html;
+
+  location /react/ {
+    alias /usr/share/nginx/html/react/;
+    try_files $uri $uri/ /react/index.html;
+  }
+
+  location /vue/ {
+    alias /usr/share/nginx/html/vue/;
+    try_files $uri $uri/ /vue/index.html;
+  }
+
+  location /vanilla/ {
+    alias /usr/share/nginx/html/vanilla/;
+    try_files $uri $uri/ /vanilla/index.html;
+  }
+
+  location / {
+    return 302 /react/;
+  }
+
+  # Caching for static assets
+  location ~* \.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?)$ {
+    expires 1y;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  error_page 404 = /404.html;
+}

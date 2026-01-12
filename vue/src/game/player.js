@@ -9,16 +9,16 @@ export default class PlayerController extends Phaser.Scene {
 
     preload(){
         this.load.spritesheet('player',
-            "rocket.png",
+            "vue/rocket.png",
             { frameWidth: 16, frameHeight: 32}
         );
 
         this.load.spritesheet('explode',
-            "explode.png",
+            "vue/explode.png",
             { frameWidth: 72, frameHeight: 72}
         );
 
-        this.load.image('wormhole',"wormhole.png")
+        this.load.image('wormhole',"vue/wormhole.png")
     }
 
     create(){ 

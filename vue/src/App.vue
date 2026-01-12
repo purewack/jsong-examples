@@ -33,7 +33,8 @@ watch(route, (to)=>{
 
 function audioOk(){
   const j = toRaw(jsong.value)
-  j.parseManifest('space.jsong').then(m => {
+  const path = 'vue/space.jsong'
+  j.parseManifest(path).then(m => {
     console.log(m)
     j.useManifest(m,{click:false}).then(()=>{
       loaded.value = true
@@ -88,7 +89,7 @@ body {
   height: 100%;
   width: 100%;
   background-size: 400px 400px;
-  background-image: url('bg.png');
+  background-image: url('/vue/bg.png');
   image-rendering:pixelated;
 
   transform-origin: 100% 0;

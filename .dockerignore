@@ -1,0 +1,8 @@
+**/node_modules
+**/.parcel-cache
+*.log
+.git
+.DS_Store
+react/.next
+out
+dist

@@ -7,7 +7,7 @@
       "clean": "rm -r .parcel-cache dist",
       "dev_link": "npm link ../../jsong-audio",
       "dev": "parcel index.html --open",
-      "build": "parcel build index.html"
+      "build": "parcel build index.html --public-url /vanilla/"
   },
   "dependencies": {
       "jsong-audio": "^1.0.1"

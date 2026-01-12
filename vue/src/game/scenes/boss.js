@@ -20,10 +20,10 @@ export default class Boss extends PlayerController {
     {   
         super.preload()
 
-        this.load.image('enemy1',"enemy1.png")
-        this.load.image('bullet0',"bullet0.png")
-        this.load.image('bullet1',"bullet1.png")
-        this.load.image('bullet2',"bullet2.png")
+        this.load.image('enemy1',"vue/enemy1.png")
+        this.load.image('bullet0',"vue/bullet0.png")
+        this.load.image('bullet1',"vue/bullet1.png")
+        this.load.image('bullet2',"vue/bullet2.png")
     }
     create ()
     {

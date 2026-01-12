@@ -18,9 +18,9 @@ export default class Avoid extends PlayerController {
     {   
         super.preload()
 
-        this.load.image('power',"power0.png")
-        this.load.image('obstacle0',"obs0.png")
-        this.load.image('obstacle1',"obs1.png")
+        this.load.image('power',"vue/power0.png")
+        this.load.image('obstacle0',"vue/obs0.png")
+        this.load.image('obstacle1',"vue/obs1.png")
     }
     create ()
     {
